@@ -27,10 +27,10 @@ public class ConnectionModeController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     
         // Create the custom buttons and add them to the VBox
-        XOButton vsComputerBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
-        XOButton vsFriendBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
+        XOButton offlineBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
+        XOButton onlineBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
         
-        buttonContainer.getChildren().addAll(vsComputerBtn, vsFriendBtn);
+        buttonContainer.getChildren().addAll(offlineBtn, onlineBtn);
     }
     
     private void handleOfflineButtonAction() {
