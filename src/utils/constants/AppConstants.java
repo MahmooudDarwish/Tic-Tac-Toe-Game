@@ -13,6 +13,6 @@ public abstract class AppConstants {
     
      public final static String xIconPath = "/assets/icons/XIcon.png";
      public final static String oIconPath = "/assets/icons/OIcon.png";
-
+      public final static String xoImagePath = "/assets/icons/xoImage.jpg";
     
 }
