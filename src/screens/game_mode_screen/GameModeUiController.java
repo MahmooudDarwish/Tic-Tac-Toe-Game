@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import components.CustomPopup;
 import components.XOButton;
+import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
 
 public class GameModeUiController implements Initializable {
@@ -65,7 +66,8 @@ public class GameModeUiController implements Initializable {
        
     }
     private void handleBackButtonAction() {
-       
+        
+       TicTacToeGame.changeRoot(AppConstants.connectionModePath);
     }
 
    

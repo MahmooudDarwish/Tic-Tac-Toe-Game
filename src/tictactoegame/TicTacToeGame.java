@@ -25,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import components.CustomPopup;
+import utils.constants.AppConstants;
 
 /**
  *
@@ -41,7 +42,7 @@ public class TicTacToeGame extends Application {
 
 
         primaryStage = stage;
-        Parent root = FXMLLoader.load(getClass().getResource("/screens/connection_mode_screen/ConnectionModeScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.connectionModePath));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
 
 /**
@@ -59,11 +60,15 @@ public class SignupScreenController implements Initializable {
         }
     }
     private void handleLoginButtonAction() {
-        System.out.println("Navigate to Home screen");
+        System.out.println("Navigate to login screen");
+        TicTacToeGame.changeRoot(AppConstants.loginPath);
+        
     }
 
     private void handleRegisterButtonAction() {
         System.out.println("Navigate to Register screen");
+        ///if registeration done from server
+        TicTacToeGame.changeRoot(AppConstants.loginPath);
     }
     
      
