@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
+import tictactoegame.TicTacToeGame;
 import tictactoegame.components.XOButton;
 import utils.constants.AppConstants;
 
@@ -20,25 +21,28 @@ import utils.constants.AppConstants;
  */
 public class ConnectionModeController implements Initializable {
 
-      @FXML
+    @FXML
     private VBox buttonContainer;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    
+
         // Create the custom buttons and add them to the VBox
-        XOButton vsComputerBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
+        XOButton vsComputerBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath);
         XOButton vsFriendBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
-        
+
         buttonContainer.getChildren().addAll(vsComputerBtn, vsFriendBtn);
     }
-    
+
     private void handleOfflineButtonAction() {
         System.out.println("Navigate to Connection mode screen");
+        TicTacToeGame.changeRoot(AppConstants.gameModePath);
+        
     }
-    
+
     private void handleOnlineButtonAction() {
         System.out.println("Navigate to Login");
+        TicTacToeGame.changeRoot(AppConstants.loginPath);
     }
-    
+
 }

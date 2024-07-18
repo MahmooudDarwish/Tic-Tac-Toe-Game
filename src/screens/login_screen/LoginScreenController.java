@@ -39,11 +39,11 @@ public class LoginScreenController implements Initializable {
                 
         
         // Create the custom buttons and add them to the VBox
-        XOButton vsComputerBtn = new XOButton("Login", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
+        XOButton loginBtn = new XOButton("Login", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
         XOButton vsFriendBtn = new XOButton("Register", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
         
         buttonContainer.setSpacing(20);
-        buttonContainer.getChildren().addAll(vsComputerBtn, vsFriendBtn);
+        buttonContainer.getChildren().addAll(loginBtn, vsFriendBtn);
         
         
     }    
