@@ -1,4 +1,4 @@
-package tictactoegame.components;
+package components;
 import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import tictactoegame.components.XOButton;
 
 public class CustomPopup extends Stage {
 
