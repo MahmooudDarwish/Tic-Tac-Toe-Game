@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
-import tictactoegame.components.XOButton;
+import components.XOButton;
 import utils.constants.AppConstants;
 
 /**
@@ -27,8 +27,8 @@ public class ConnectionModeController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     
         // Create the custom buttons and add them to the VBox
-        XOButton vsComputerBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
-        XOButton vsFriendBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
+        XOButton vsComputerBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath, 200, 40 );
+        XOButton vsFriendBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath, 200, 40);
         
         buttonContainer.getChildren().addAll(vsComputerBtn, vsFriendBtn);
     }
