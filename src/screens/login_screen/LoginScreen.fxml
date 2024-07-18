@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.login_screen.LoginScreenController">
+   <center>
+      <VBox fx:id="textFiledContainer" prefHeight="272.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="128.0" right="138.0" top="71.0" />
+         </BorderPane.margin></VBox>
+   </center>
+   <bottom>
+      <VBox fx:id="buttonContainer" prefHeight="122.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="200.0" />
+         </padding></VBox>
+   </bottom>
+</BorderPane>
