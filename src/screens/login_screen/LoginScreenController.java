@@ -32,9 +32,10 @@ public class LoginScreenController implements Initializable {
        
         XOButton loginBtn = new XOButton("Login", () -> handleLoginButtonAction(), AppConstants.xIconPath, 200, 40);
         XOButton registerBtn = new XOButton("Register", () -> handleRegisterButtonAction(), AppConstants.oIconPath, 200, 40);
+        XOButton backBtn = new XOButton("Back", () -> handleRegisterButtonAction(), AppConstants.backIconPath, 200, 40);
 
         screenContainer.setSpacing(20);
-        screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn);
+        screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn,backBtn);
     }
 
     private void handleLoginButtonAction() {

@@ -20,7 +20,7 @@ public class TicTacToeGame extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("/screens/login_screen/LoginScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/screens/signup_screen/SignupScreen.fxml"));
        
         //test push
         Scene scene = new Scene(root);
@@ -28,7 +28,6 @@ public class TicTacToeGame extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
     /**
      * @param args the command line arguments
      */
