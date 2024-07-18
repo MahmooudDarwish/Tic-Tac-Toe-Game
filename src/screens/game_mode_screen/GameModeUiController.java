@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import tictactoegame.components.XOButton;
+import components.XOButton;
 import utils.constants.AppConstants;
 
 public class GameModeUiController implements Initializable {
@@ -27,11 +27,13 @@ public class GameModeUiController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         XOButton playComputerBtn = new XOButton("Play PC", () -> handlePlayPCButtonAction(), AppConstants.xIconPath );
-        XOButton playFriendBtn = new XOButton("Play Friend", () -> handlePlayFriendButtonAction(), AppConstants.oIconPath);
-         XOButton backBtn = new XOButton("Back", () -> handleBackButtonAction(), AppConstants.xIconPath );
-         
+        XOButton playComputerBtn = new XOButton("Play PC", () -> handlePlayPCButtonAction(), AppConstants.xIconPath,200,40 );
+        XOButton playFriendBtn = new XOButton("Play Friend", () -> handlePlayFriendButtonAction(), AppConstants.oIconPath,200,40);
+        XOButton backBtn = new XOButton("Back", () -> handleBackButtonAction(), AppConstants.backIconPath ,200,40);
+        
+        buttonContainer.setSpacing(20);
         buttonContainer.getChildren().addAll(playComputerBtn, playFriendBtn,backBtn);
+
     }    
     private void handlePlayPCButtonAction() {
         System.out.println("Navigate to players bob up");
@@ -89,6 +91,7 @@ public class GameModeUiController implements Initializable {
 
         dialog.getDialogPane().setContent(grid);
         dialog.show();
+        
     }
     private void handleBackButtonAction() {
         System.out.println("back to connection mode screen");

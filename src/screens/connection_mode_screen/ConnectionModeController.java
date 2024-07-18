@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import tictactoegame.TicTacToeGame;
-import tictactoegame.components.XOButton;
 import components.XOButton;
 import utils.constants.AppConstants;
 
@@ -32,10 +31,10 @@ public class ConnectionModeController implements Initializable {
 
 
 
-        XOButton offlineBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
-        XOButton onlineBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
+        XOButton offlineBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath,200,40 );
+        XOButton onlineBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath,200,40);
 
-        
+        buttonContainer.setSpacing(20);
         buttonContainer.getChildren().addAll(offlineBtn, onlineBtn);
 
     }
