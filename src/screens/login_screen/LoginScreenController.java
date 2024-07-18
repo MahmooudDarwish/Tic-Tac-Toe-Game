@@ -27,6 +27,7 @@ public class LoginScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         XOTextField userNameField = new XOTextField("Enter Your UserName", 400, 50);
         XOPasswordField passwordField = new XOPasswordField("Enter Your Password", 400, 50);
        
@@ -36,6 +37,7 @@ public class LoginScreenController implements Initializable {
 
         screenContainer.setSpacing(20);
         screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn,backBtn);
+        screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn);
     }
 
     private void handleLoginButtonAction() {
