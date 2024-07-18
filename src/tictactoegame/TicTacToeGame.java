@@ -35,6 +35,7 @@ public class TicTacToeGame extends Application {
     public void start(Stage stage) throws Exception {
 
 
+
         primaryStage = stage;
         Parent root = FXMLLoader.load(getClass().getResource("/screens/connection_mode_screen/ConnectionModeScreen.fxml"));
         Scene scene = new Scene(root);
@@ -51,7 +52,6 @@ public class TicTacToeGame extends Application {
         }
 
     }
-
     /**
      * @param args the command line arguments
      */
