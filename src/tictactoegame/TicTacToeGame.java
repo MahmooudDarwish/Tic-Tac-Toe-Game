@@ -5,19 +5,23 @@
  */
 package tictactoegame;
 
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import tictactoegame.components.CustomPopup;
 
 /**
  *
@@ -27,12 +31,8 @@ public class TicTacToeGame extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-
-        Parent root = FXMLLoader.load(getClass().getResource("/screens/game_mode_screen/GameModeUi.fxml"));
-       
-        
-        Scene scene = new Scene(root);
-        
+      Parent root = FXMLLoader.load(getClass().getResource("/screens/game_mode_screen/GameModeUi.fxml"));
+      Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
        

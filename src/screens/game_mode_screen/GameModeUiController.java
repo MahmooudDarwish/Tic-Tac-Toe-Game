@@ -6,10 +6,12 @@
 package screens.game_mode_screen;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -19,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import tictactoegame.components.XOButton;
+import tictactoegame.components.CustomPopup;
 import utils.constants.AppConstants;
 
 public class GameModeUiController implements Initializable {
@@ -34,65 +37,34 @@ public class GameModeUiController implements Initializable {
         buttonContainer.getChildren().addAll(playComputerBtn, playFriendBtn,backBtn);
     }    
     private void handlePlayPCButtonAction() {
-        System.out.println("Navigate to players bob up");
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Dialog");
-        dialog.setHeaderText("Please enter your names");
-
-         
-        ButtonType loginButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
-
-        // Create the username and password labels and fields
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField player1 = new TextField();
-        player1.setPromptText("player 1");
-        
-
-        grid.add(new Label("player 1:"), 0, 0);
-        grid.add(player1, 1, 0);
-       
-
-        dialog.getDialogPane().setContent(grid);
-        dialog.show();
+        ArrayList<Object> content=new ArrayList();
+        TextField player1=new TextField();
+         player1.setPromptText("player1 name");
+        content.add(player1);
+        content.add(new XOButton("Play ", () -> {}, AppConstants.xIconPath));
+        content.add(new XOButton("Cancel", () -> {}, AppConstants.xIconPath));
+        CustomPopup cp=new CustomPopup(content,"enter your name");
+        cp.show();
     }
     
     private void handlePlayFriendButtonAction() {
-        
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Dialog");
-        dialog.setHeaderText("Please enter your names");
-
-         
-        ButtonType loginButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
-
-        // Create the username and password labels and fields
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField player1 = new TextField();
-        player1.setPromptText("player 1");
-        TextField palyer2 = new TextField();
-        palyer2.setPromptText("player 2");
-
-        grid.add(new Label("player 1:"), 0, 0);
-        grid.add(player1, 1, 0);
-        grid.add(new Label("player 2"), 0, 1);
-        grid.add(palyer2, 1, 1);
-
-        dialog.getDialogPane().setContent(grid);
-        dialog.show();
+         ArrayList<Object> content=new ArrayList();
+         TextField player1=new TextField();
+         player1.setPromptText("player1 name");
+         TextField player2=new TextField();
+         player2.setPromptText("player2 name");
+        content.add(player1);
+        content.add(player2);
+        content.add(new XOButton("Play ", () -> {}, AppConstants.xIconPath));
+        content.add(new XOButton("Cancel", () -> {}, AppConstants.oIconPath));
+        CustomPopup cp=new CustomPopup(content,"enter your names"); 
+       cp.show();
     }
     private void handleBackButtonAction() {
-        System.out.println("back to connection mode screen");
+       
     }
+
+   
     
     
 }
