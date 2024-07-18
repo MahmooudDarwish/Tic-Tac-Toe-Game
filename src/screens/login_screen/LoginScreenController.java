@@ -9,11 +9,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import tictactoegame.components.XOButton;
-import tictactoegame.components.XOPasswordField;
-import tictactoegame.components.XOTextField;
+import components.XOButton;
+import components.XOPasswordField;
+import components.XOTextField;
 import utils.constants.AppConstants;
 
 /**
@@ -24,35 +23,27 @@ import utils.constants.AppConstants;
 public class LoginScreenController implements Initializable {
 
     @FXML
-    private VBox buttonContainer;
-    @FXML
-    private VBox textFiledContainer;
-    
+    private VBox screenContainer;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        XOTextField userNameField=new XOTextField ("Enter Your UserName");
-        XOPasswordField passwordField=new XOPasswordField ("Enter Your Password");
-        
-        textFiledContainer.setSpacing(20);
-        textFiledContainer.getChildren().addAll(userNameField, passwordField);
-                
-        
-        // Create the custom buttons and add them to the VBox
-        XOButton loginBtn = new XOButton("Login", () -> handleOfflineButtonAction(), AppConstants.xIconPath );
-        XOButton vsFriendBtn = new XOButton("Register", () -> handleOnlineButtonAction(), AppConstants.oIconPath);
-        
-        buttonContainer.setSpacing(20);
-        buttonContainer.getChildren().addAll(loginBtn, vsFriendBtn);
-        
-        
-    }    
-    
-    private void handleOfflineButtonAction() {
-        System.out.println("Navigate to Connection mode screen");
+
+        XOTextField userNameField = new XOTextField("Enter Your UserName", 400, 50);
+        XOPasswordField passwordField = new XOPasswordField("Enter Your Password", 400, 50);
+       
+        XOButton loginBtn = new XOButton("Login", () -> handleLoginButtonAction(), AppConstants.xIconPath, 200, 40);
+        XOButton registerBtn = new XOButton("Register", () -> handleRegisterButtonAction(), AppConstants.oIconPath, 200, 40);
+
+        screenContainer.setSpacing(20);
+        screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn);
+
     }
-    
-    private void handleOnlineButtonAction() {
-        System.out.println("Navigate to Login");
+
+    private void handleLoginButtonAction() {
+        System.out.println("Navigate to Home screen");
+    }
+
+    private void handleRegisterButtonAction() {
+        System.out.println("Navigate to Register screen");
     }
 }

@@ -10,9 +10,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 /**
  *
@@ -25,6 +33,7 @@ public class TicTacToeGame extends Application {
             
     @Override
     public void start(Stage stage) throws Exception {
+
 
         primaryStage = stage;
         Parent root = FXMLLoader.load(getClass().getResource("/screens/connection_mode_screen/ConnectionModeScreen.fxml"));
@@ -40,6 +49,7 @@ public class TicTacToeGame extends Application {
         } catch (IOException ex) {
             Logger.getLogger(TicTacToeGame.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     /**

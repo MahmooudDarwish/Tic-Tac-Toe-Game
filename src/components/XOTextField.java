@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tictactoegame.components;
+package components;
 
 import javafx.scene.control.TextField;
 
@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
  */
 public class XOTextField extends TextField {
 
-    public  XOTextField(String promptText){
+    public  XOTextField(String promptText, double width, double height){
      setPromptText(promptText);
      setStyle("-fx-background-color: white;"
                 + " -fx-border-color: grey;"
@@ -22,7 +22,10 @@ public class XOTextField extends TextField {
                 + "-fx-background-radius: 10px; "
                 + " -fx-font-size: 16px;"
                 + " -fx-text-fill: black;"
-        ); // Button style with rounded corners
+        );
+        setMinSize(width, height);
+        setPrefWidth(width);
+        setMaxWidth(width);
     }
 
 }
