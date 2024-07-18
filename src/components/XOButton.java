@@ -1,8 +1,5 @@
-package tictactoegame.components;
+package components;
 
-import java.awt.event.ActionListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,7 +10,7 @@ import javafx.scene.layout.HBox;
 
 public class XOButton extends Button {
     
-    public XOButton(String label, Runnable action, String iconPath) {
+    public XOButton(String label, Runnable action, String iconPath, double width,double height ) {
         ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
         iconView.setFitHeight(16);
         iconView.setFitWidth(16);
@@ -34,7 +31,7 @@ public class XOButton extends Button {
                 + " -fx-font-size: 16px;"
                 + " -fx-text-fill: black;"
         ); // Button style with rounded corners
-        setMinSize(200, 40); // Minimum size of the button
+        setMinSize(width, height); // Minimum size of the button
         setOnAction(event -> action.run()); // Set the action
     }
 }
