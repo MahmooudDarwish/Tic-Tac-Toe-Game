@@ -10,8 +10,8 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
-import tictactoegame.TicTacToeGame;
 import components.XOButton;
+import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
 
 /**
