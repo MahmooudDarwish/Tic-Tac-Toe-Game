@@ -24,13 +24,28 @@ public class GameModeUiController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        XOButton playComputerBtn = new XOButton("Play PC", () -> handlePlayPCButtonAction(), AppConstants.xIconPath, 200, 40);
-        XOButton playFriendBtn = new XOButton("Play Friend", () -> handlePlayFriendButtonAction(), AppConstants.oIconPath, 200, 40);
-        XOButton backBtn = new XOButton("Back", () -> handleBackButtonAction(), AppConstants.backIconPath, 200, 40);
+        XOButton playComputerBtn = new XOButton("Play PC",
+                () -> handlePlayPCButtonAction(),
+                AppConstants.xIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath
+        );
+        XOButton playFriendBtn = new XOButton("Play Friend",
+                () -> handlePlayFriendButtonAction(),
+                AppConstants.oIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath);
+        XOButton backBtn = new XOButton("Back",
+                () -> handleBackButtonAction(),
+                AppConstants.backIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath);
 
         buttonContainer.setSpacing(20);
         buttonContainer.getChildren().addAll(playComputerBtn, playFriendBtn, backBtn);
-
 
     }
 
@@ -38,8 +53,13 @@ public class GameModeUiController implements Initializable {
         ArrayList<Object> content = new ArrayList();
         XOTextField player1 = new XOTextField("Player1 name", 300, 30);
         content.add(player1);
-        content.add(new XOButton("Play ", () -> {
-        }, AppConstants.oIconPath, 140, 40));
+        content.add(new XOButton("Play ",
+                () -> {
+                },
+                AppConstants.oIconPath,
+                140,
+                40,
+                AppConstants.buttonClickedTonePath));
         CustomPopup cp = new CustomPopup(content, "Enter your name", 130, 350);
         cp.show();
     }
@@ -50,9 +70,14 @@ public class GameModeUiController implements Initializable {
         XOTextField player2 = new XOTextField("Player2 name", 300, 30);
         content.add(player1);
         content.add(player2);
-        content.add(new XOButton("Play ", () -> {
-        }, AppConstants.oIconPath, 140, 40));
-        CustomPopup cp = new CustomPopup(content, "Enter your names", 200,350);
+        content.add(new XOButton("Play ",
+                () -> {
+                },
+                AppConstants.oIconPath,
+                140,
+                40,
+                 AppConstants.buttonClickedTonePath));
+        CustomPopup cp = new CustomPopup(content, "Enter your names", 200, 350);
         cp.show();
     }
 

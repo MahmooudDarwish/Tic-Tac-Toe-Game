@@ -6,11 +6,14 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import utils.helpers.ToneManager;
 
 public class XOButton extends Button {
-    
-    public XOButton(String label, Runnable action, String iconPath, double width,double height ) {
+
+    public XOButton(String label, Runnable action, String iconPath, double width, double height, String tone) {
         ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
         iconView.setFitHeight(16);
         iconView.setFitWidth(16);
@@ -21,7 +24,6 @@ public class XOButton extends Button {
         hbox.setSpacing(20); // Spacing between icon and text
         hbox.setAlignment(Pos.CENTER_LEFT); // Align content to the left
 
-
         setGraphic(hbox); // Set the HBox as the button's graphic
         setStyle("-fx-background-color: white;"
                 + " -fx-border-color: grey;"
@@ -30,8 +32,13 @@ public class XOButton extends Button {
                 + "-fx-background-radius: 10px; "
                 + " -fx-font-size: 16px;"
                 + " -fx-text-fill: black;"
-        ); // Button style with rounded corners
-        setMinSize(width, height); // Minimum size of the button
-        setOnAction(event -> action.run()); // Set the action
+        );
+        setMinSize(width, height);
+
+        setOnAction(event
+                -> {
+            ToneManager.playTone(tone);
+            action.run();
+        }); // Set the action
     }
 }

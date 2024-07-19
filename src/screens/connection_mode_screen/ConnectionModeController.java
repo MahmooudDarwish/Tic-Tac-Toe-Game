@@ -28,11 +28,13 @@ public class ConnectionModeController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         // Create the custom buttons and add them to the VBox
-
-
-
-        XOButton offlineBtn = new XOButton("Offline", () -> handleOfflineButtonAction(), AppConstants.xIconPath,200,40 );
-        XOButton onlineBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath,200,40);
+        XOButton offlineBtn = new XOButton("Offline",
+                () -> handleOfflineButtonAction(),
+                AppConstants.xIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath);
+        XOButton onlineBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath, 200, 40, AppConstants.buttonClickedTonePath);
 
         buttonContainer.setSpacing(20);
         buttonContainer.getChildren().addAll(offlineBtn, onlineBtn);
@@ -42,7 +44,7 @@ public class ConnectionModeController implements Initializable {
     private void handleOfflineButtonAction() {
         System.out.println("Navigate to Connection mode screen");
         TicTacToeGame.changeRoot(AppConstants.gameModePath);
-        
+
     }
 
     private void handleOnlineButtonAction() {

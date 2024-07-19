@@ -31,13 +31,28 @@ public class LoginScreenController implements Initializable {
 
         XOTextField userNameField = new XOTextField("Enter Your UserName", 400, 50);
         XOPasswordField passwordField = new XOPasswordField("Enter Your Password", 400, 50);
-       
-        XOButton loginBtn = new XOButton("Login", () -> handleLoginButtonAction(), AppConstants.xIconPath, 200, 40);
-        XOButton registerBtn = new XOButton("Register", () -> handleRegisterButtonAction(), AppConstants.oIconPath, 200, 40);
-        XOButton backBtn = new XOButton("Back", () -> handleBackButtonAction(), AppConstants.backIconPath, 200, 40);
+
+        XOButton loginBtn = new XOButton("Login", 
+                () -> handleLoginButtonAction()
+                , AppConstants.xIconPath,
+                200,
+                40, 
+                AppConstants.buttonClickedTonePath);
+        XOButton registerBtn = new XOButton("Register",
+                () -> handleRegisterButtonAction(),
+                AppConstants.oIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath);
+        XOButton backBtn = new XOButton("Back",
+                () -> handleBackButtonAction(),
+                AppConstants.backIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath);
 
         screenContainer.setSpacing(20);
-        screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn,backBtn);
+        screenContainer.getChildren().addAll(userNameField, passwordField, loginBtn, registerBtn, backBtn);
     }
 
     private void handleLoginButtonAction() {
@@ -48,7 +63,8 @@ public class LoginScreenController implements Initializable {
         System.out.println("Navigate to Register screen");
         TicTacToeGame.changeRoot(AppConstants.signupModePath);
     }
-        private void handleBackButtonAction() {
+
+    private void handleBackButtonAction() {
         System.out.println("Navigate to Home screen");
         TicTacToeGame.changeRoot(AppConstants.connectionModePath);
     }
