@@ -25,6 +25,22 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import components.CustomPopup;
+import javafx.event.ActionEvent;
+import javafx.geometry.NodeOrientation;
+import javafx.scene.control.ContentDisplay;
+
+
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+
+import utils.constants.AppConstants;
 
 /**
  *
@@ -37,12 +53,13 @@ public class TicTacToeGame extends Application {
             
     @Override
     public void start(Stage stage) throws Exception {
-
-
-
+      
         primaryStage = stage;
-        Parent root = FXMLLoader.load(getClass().getResource("/screens/connection_mode_screen/ConnectionModeScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/screens/playing_screen/PlayingScreen.fxml"));
         Scene scene = new Scene(root);
+        primaryStage.setMinWidth(300);
+        primaryStage.setMinHeight(300);
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -63,7 +80,7 @@ public class TicTacToeGame extends Application {
         launch(args);
     }
 
-  
+ 
 
   
 
