@@ -71,20 +71,20 @@ public class PlayingScreenController implements Initializable {
             else{flag=true;   b.setGraphic(o);}
             });
            }
-       gp.setLayoutX(40);
+       gp.setLayoutX(20);
        gp.setLayoutY(60);
-       XOButton record = new XOButton("Record", () -> {}, AppConstants.xIconPath,200,40 );
+       XOButton record = new XOButton("Record", () -> {}, AppConstants.xIconPath,100,40 );
        record.setLayoutX(20);
        record.setLayoutY(10);
-XOButton resign = new XOButton("Resign", () -> {}, AppConstants.oIconPath,200,40 );
-       resign.setLayoutX(250);
+XOButton resign = new XOButton("Resign", () -> {}, AppConstants.oIconPath,100,40 );
+       resign.setLayoutX(170);
        resign.setLayoutY(10);
        Text player1=new Text("Player1 name: \n his Score:");
-       player1.setLayoutX(400);
+       player1.setLayoutX(350);
        player1.setLayoutY(100);
        player1.setFont(Font.font("", FontWeight.BOLD, 16));
        Text player2=new Text("Player2 name: \n his Score:");
-       player2.setLayoutX(400);
+       player2.setLayoutX(350);
        player2.setLayoutY(200);
        player2.setFont(Font.font("", FontWeight.BOLD, 16));
        AnchorPane.getChildren().addAll(gp,record,resign,player1,player2);
