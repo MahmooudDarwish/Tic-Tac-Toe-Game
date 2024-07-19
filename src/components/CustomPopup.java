@@ -9,46 +9,56 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import utils.constants.AppConstants;
 
 public class CustomPopup extends Stage {
 
-  public CustomPopup(ArrayList<Object> content, String title) {
+    public CustomPopup(ArrayList<Object> content, String title, double height, double width) {
         // Set the title
         setTitle(title);
-
+        //create cancel button 
+       
+        XOButton cancelButton = new XOButton("Cancel", () -> cancelAction() , AppConstants.xIconPath, 140, 40);
         // Create a VBox for layout
         VBox vbox = new VBox(20);
         vbox.setPadding(new Insets(20));
-        vbox.setAlignment(Pos.CENTER);
+        vbox.setAlignment(Pos.TOP_CENTER);
 
         // Add content to VBox
         for (Object obj : content) {
             if (obj instanceof javafx.scene.Node) {
                 vbox.getChildren().add((javafx.scene.Node) obj);
             } else {
-                // If the object is not a JavaFX Node, you can handle it differently
+                // If the object is not a JavaFX Node, handle it differently
                 vbox.getChildren().add(new Label(obj.toString()));
             }
         }
 
-        // Check if the last element is an HBox and contains buttons
-        if (!vbox.getChildren().isEmpty()) {
-            Object lastElement = vbox.getChildren().get(vbox.getChildren().size() - 1);
-            if (lastElement instanceof HBox) {
-                HBox hbox = (HBox) lastElement;
-                for (Object node : hbox.getChildren()) {
-                    if (node instanceof Button) {
-                        System.out.println("HBox contains a Button");
-                    }
-                }
+        // Create an HBox for buttons
+        HBox buttonBox = new HBox(20);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        // Add buttons to the HBox
+        for (Object obj : content) {
+            if (obj instanceof Button) {
+                buttonBox.getChildren().add((Button) obj);
             }
         }
+        buttonBox.getChildren().add(cancelButton);
+        // Add the buttonBox to the VBox
+        vbox.getChildren().add(buttonBox);
 
         // Scene
-        Scene scene = new Scene(vbox, 300, 200);
+        Scene scene = new Scene(vbox, width, height);
+        setResizable(false);
         setScene(scene);
 
         // Make the pop-up modal (block interaction with other windows until this one is closed)
         initModality(Modality.APPLICATION_MODAL);
     }
+    
+     private void cancelAction() {
+        close();
+    }
+    
 }
