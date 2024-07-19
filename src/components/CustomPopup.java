@@ -1,4 +1,5 @@
 package components;
+
 import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,8 +18,14 @@ public class CustomPopup extends Stage {
         // Set the title
         setTitle(title);
         //create cancel button 
-       
-        XOButton cancelButton = new XOButton("Cancel", () -> cancelAction() , AppConstants.xIconPath, 140, 40);
+
+        XOButton cancelButton = new XOButton(
+                "Cancel",
+                () -> cancelAction(),
+                AppConstants.xIconPath,
+                140,
+                40,
+                AppConstants.buttonClickedTonePath);
         // Create a VBox for layout
         VBox vbox = new VBox(20);
         vbox.setPadding(new Insets(20));
@@ -56,9 +63,9 @@ public class CustomPopup extends Stage {
         // Make the pop-up modal (block interaction with other windows until this one is closed)
         initModality(Modality.APPLICATION_MODAL);
     }
-    
-     private void cancelAction() {
+
+    private void cancelAction() {
         close();
     }
-    
+
 }
