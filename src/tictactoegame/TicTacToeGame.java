@@ -28,7 +28,7 @@ public class TicTacToeGame extends Application {
     public void start(Stage stage) throws Exception {
 
         primaryStage = stage;
-        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.connectionModePath));
+        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.userHomePath));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
