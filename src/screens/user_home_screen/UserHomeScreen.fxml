@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="768" prefWidth="1366" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.user_home_screen.UserHomeController">
+    <children>
+         <fx:include source="/components/XOImage.fxml"/>
+            <HBox fx:id="topLabelContainer" alignment="CENTER" prefWidth="1366" spacing="20" AnchorPane.topAnchor="0">
+             </HBox>       
+        <VBox fx:id="screenContainer" alignment="CENTER" prefWidth="1366" prefHeight="768">
+        </VBox>
+    </children>
+</AnchorPane>

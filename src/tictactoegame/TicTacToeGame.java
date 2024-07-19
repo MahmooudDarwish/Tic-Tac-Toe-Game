@@ -5,40 +5,16 @@
  */
 package tictactoegame;
 
-import java.util.ArrayList;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
-import components.CustomPopup;
-import javafx.event.ActionEvent;
-import javafx.geometry.NodeOrientation;
-import javafx.scene.control.ContentDisplay;
 
 
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 
 import utils.constants.AppConstants;
 
@@ -53,9 +29,13 @@ public class TicTacToeGame extends Application {
             
     @Override
     public void start(Stage stage) throws Exception {
+
       
+
         primaryStage = stage;
-        Parent root = FXMLLoader.load(getClass().getResource("/screens/playing_screen/PlayingScreen.fxml"));
+
+        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.userHomePath));
+
         Scene scene = new Scene(root);
         primaryStage.setMinWidth(300);
         primaryStage.setMinHeight(300);
@@ -79,9 +59,5 @@ public class TicTacToeGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
- 
-
-  
 
 }
