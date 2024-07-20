@@ -4,26 +4,19 @@ import components.CustomPopup;
 import components.XOButton;
 import components.XOTextField;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import utils.constants.AppConstants;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import models.OfflinePlayer;
 import models.OfflinePlayerHolder;
-import screens.playing_screen.PlayingScreenController;
 import tictactoegame.TicTacToeGame;
-
+/**
+ * FXML Controller class
+ *
+ * @author Mahmoud
+ */
 public class GameModeUiController implements Initializable {
 
     @FXML

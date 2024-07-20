@@ -18,14 +18,6 @@ public class CustomPopup extends Stage {
 
     public CustomPopup(String title, double height, double width) {
 
-        XOButton cancelButton = new XOButton(
-                "Cancel",
-                this::cancelAction,
-                AppConstants.xIconPath,
-                140,
-                40,
-                AppConstants.buttonClickedTonePath);
-
         setTitle(title);
         vbox = new VBox(20);
         vbox.setPadding(new Insets(20));
@@ -46,10 +38,10 @@ public class CustomPopup extends Stage {
     public void addCancelButton(String label) {
         if (!content.isEmpty()) {
             Object lastElement = content.get(content.size() - 1);
-            if (lastElement instanceof javafx.scene.Node) {
+            if (lastElement instanceof Node) {
                 HBox hBox = new HBox(20);
                 hBox.setAlignment(Pos.CENTER);
-                hBox.getChildren().add((javafx.scene.Node) lastElement);
+                hBox.getChildren().add((Node) lastElement);
 
                 XOButton cancelButton = new XOButton(
                         label,
@@ -60,8 +52,8 @@ public class CustomPopup extends Stage {
                         AppConstants.buttonClickedTonePath);
 
                 hBox.getChildren().add(cancelButton);
-                vbox.getChildren().remove(lastElement); 
-                vbox.getChildren().add(hBox); 
+                vbox.getChildren().remove(lastElement);
+                vbox.getChildren().add(hBox);
             }
         }
     }

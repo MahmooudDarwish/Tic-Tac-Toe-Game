@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane id="AnchorPane" fx:id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.game_board_screen.GameBoardController">
+    <children>
+        <fx:include source="/components/BluredXOImage.fxml"/>
+
+        <StackPane layoutX="40.0" layoutY="146.0" prefHeight="108.0" prefWidth="123.0" fx:id="xPlayerStack" />
+        <StackPane fx:id="oPlayerStack" layoutX="431.0" layoutY="146.0" prefHeight="108.0" prefWidth="123.0" />
+    </children>
+</AnchorPane>
