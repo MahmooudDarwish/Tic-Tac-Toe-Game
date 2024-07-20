@@ -13,6 +13,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+
+
 import utils.constants.AppConstants;
 
 /**
@@ -27,9 +30,16 @@ public class TicTacToeGame extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
+      
+
         primaryStage = stage;
+
         Parent root = FXMLLoader.load(getClass().getResource(AppConstants.userHomePath));
+
         Scene scene = new Scene(root);
+        primaryStage.setMinWidth(300);
+        primaryStage.setMinHeight(300);
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -49,4 +59,5 @@ public class TicTacToeGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
