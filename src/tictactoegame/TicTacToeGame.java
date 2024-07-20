@@ -14,8 +14,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
-
 import utils.constants.AppConstants;
 
 /**
@@ -23,36 +21,37 @@ import utils.constants.AppConstants;
  * @author Mahmoud
  */
 public class TicTacToeGame extends Application {
-    
 
     private static Stage primaryStage;
-            
+
     @Override
     public void start(Stage stage) throws Exception {
 
-      
-
         primaryStage = stage;
 
-        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.userHomePath));
+        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.connectionModePath));
 
         Scene scene = new Scene(root);
-        primaryStage.setMinWidth(300);
-        primaryStage.setMinHeight(300);
+        primaryStage.setMinWidth(1366);
+        primaryStage.setMinHeight(766);
 
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
-      public static void changeRoot(String fxmlFile)  {
-         try {
+
+    public static void changeRoot(String fxmlFile) {
+        try {
+            
             Parent newRoot = FXMLLoader.load(TicTacToeGame.class.getResource(fxmlFile));
             primaryStage.getScene().setRoot(newRoot);
+            
         } catch (IOException ex) {
             Logger.getLogger(TicTacToeGame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+
+
     /**
      * @param args the command line arguments
      */
