@@ -30,7 +30,11 @@ public abstract class AppConstants {
     public final static String connectionModePath = "/screens/connection_mode_screen/ConnectionModeScreen.fxml";
     public final static String signupModePath = "/screens/signup_screen/SignupScreen.fxml";
     public final static String userHomePath = "/screens/user_home_screen/UserHomeScreen.fxml";
+    public final static String playScreenPath = "/screens/playing_screen/PlayingScreen.fxml";
+
 
 }
+
+
 
 
