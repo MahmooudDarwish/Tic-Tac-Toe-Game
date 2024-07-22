@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -30,6 +31,7 @@ public class XOLabel extends HBox {
         // Create and style the label
         label = new Label(text);
         setVisible(isVisible);
+        
         
         label.setStyle("-fx-padding: 10;"
                 + "-fx-font-weight: bold;" // Make text bold
@@ -50,6 +52,13 @@ public class XOLabel extends HBox {
     // Method to set the text of the label
     public void setText(String text) {
         label.setText(text);
+    }
+
+    public void setLabeStyle(String style) {
+        label.setStyle("-fx-padding: 10;"
+                + "-fx-font-weight: bold;" // Make text bold
+                + "-fx-font-size: 20px;"
+                +style);
     }
 
     // Method to get the text of the label
