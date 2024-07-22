@@ -1,6 +1,8 @@
 package screens.game_board_screen;
 
+import components.CustomPopup;
 import components.XOButton;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -11,10 +13,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import models.OfflinePlayer;
 import models.OfflinePlayerHolder;
 import utils.constants.AppConstants;
@@ -94,7 +100,7 @@ public class GameBoardController implements Initializable {
                 });
             }
         }
-
+  
         Text xPlayerText = new Text(xPlayer.getName());
         xPlayerText.setFont(Font.font("", FontWeight.BOLD, 24));
 
@@ -134,5 +140,56 @@ public class GameBoardController implements Initializable {
         rootLayout.setPrefWidth(1366);
 
         AnchorPane.getChildren().add(rootLayout);
+    }
+    private void showVideoPopUp(String winnerName, String videoPath) {
+
+        File videoFile = new File(videoPath);
+
+        Media media = new Media(videoFile.toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+
+        // Set the desired width and height for the MediaView
+        mediaView.setFitWidth(450);
+        mediaView.setFitHeight(300);
+
+        String popUpTitle = winnerName + " Wins";
+        Text winnerText = new Text(popUpTitle);
+
+        winnerText.setFont(Font.font("", FontWeight.BOLD, 24));
+        winnerText.setFill(Color.GREY);
+        winnerText.setTextAlignment(TextAlignment.CENTER);
+
+        CustomPopup popup = new CustomPopup(popUpTitle, 400, 450, false);
+
+        XOButton playAgainButton = new XOButton("Play Again",
+                () -> {
+                    popup.close();
+                    mediaPlayer.dispose();
+                    resetGame();
+                },
+                AppConstants.xIconPath,
+                100,
+                40,
+                AppConstants.buttonClickedTonePath);
+
+        XOButton exitButton = new XOButton("Exit",
+                () -> {
+                    popup.close();
+                    mediaPlayer.dispose();
+                    navigateGameModeScreen();
+                },
+                AppConstants.oIconPath,
+                100,
+                40,
+                AppConstants.buttonClickedTonePath);
+
+        popup.addContent(winnerText);
+        popup.addContent(mediaView);
+        popup.addContent(playAgainButton);
+        popup.addContent(exitButton);
+
+        popup.show();
+        mediaPlayer.play();
     }
 }
