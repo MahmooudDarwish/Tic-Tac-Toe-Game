@@ -13,7 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import components.XOButton;
-import components.CustomLabel;
+import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
 import models.OnlinePlayer;
@@ -40,8 +40,8 @@ public class LoginScreenController implements Initializable {
     private XOButton backBtn;
     private Response response;
     private CustomPopup cp;
-    private CustomLabel popupResponseMessageLabel;
-    private CustomLabel passwordErrorLabel;
+    private XOLabel popupResponseMessageLabel;
+    private XOLabel passwordErrorLabel;
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$");
@@ -51,7 +51,7 @@ public class LoginScreenController implements Initializable {
         player = new OnlinePlayer();
         userNameField = new XOTextField("Enter Your UserName", 400, 50);
         passwordField = new XOPasswordField("Enter Your Password", 400, 50);
-        passwordErrorLabel = new CustomLabel(AppConstants.warningIconPath, "");
+        passwordErrorLabel = new XOLabel(AppConstants.warningIconPath, "", 500, 80, false);
 
         registerBtn = new XOButton("Register",
                 this::handleRegisterButtonAction,
@@ -100,7 +100,7 @@ public class LoginScreenController implements Initializable {
         loginBtn.setDisable(userName.isEmpty() || !isPasswordValid);
     }
     private void handlePopup(String popupTitel,String iconePath,String message) {
-        popupResponseMessageLabel = new CustomLabel(iconePath, message);
+        popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 80, true);
         cp = new CustomPopup(popupTitel, 130, 600,true);
         cp.addContent(popupResponseMessageLabel);
         cp.addCancelButton("OK");
@@ -124,7 +124,7 @@ public class LoginScreenController implements Initializable {
 
         try {
             // Send JSON to server and receive response
-            response = JsonSender.sendJsonAndReceiveResponse(json,AppConstants.serverIp, 5006); // Adjust server address and port as needed
+            response = JsonSender.sendJsonAndReceiveResponse(json,AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
             System.out.println(response.toString());
 
             // Handle server response

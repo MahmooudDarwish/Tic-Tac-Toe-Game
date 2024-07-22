@@ -39,7 +39,22 @@ public abstract class AppConstants {
     public final static String userHomePath = "/screens/user_home_screen/UserHomeScreen.fxml";
     public final static String gameBoardScreenPath = "/screens/game_board_screen/GameBoardScreen.fxml";
     public final static String aiModeScreenPath = "/screens/ai_mode_screen/AiMode.fxml";
+    public final static String enterServerIpScreen ="/screens/enter_ip_screen/EnterServerIp.fxml";
+
+
+
     //SERVER
-    public final static String serverIp = "192.168.1.6";
+    private  static String serverIp;
+    
+    public  static void  setServerIp (String ip)
+    {
+        serverIp=ip;
+    }
+    public  static String  getServerIp()
+    {
+        return serverIp;
+    }
+    
+     
 
 }
