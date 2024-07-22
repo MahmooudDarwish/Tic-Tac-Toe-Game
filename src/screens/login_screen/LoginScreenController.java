@@ -13,7 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import components.XOButton;
-import components.XOLabel;
+import components.CustomLabel;
 import components.XOPasswordField;
 import components.XOTextField;
 import models.OnlinePlayer;
@@ -40,8 +40,8 @@ public class LoginScreenController implements Initializable {
     private XOButton backBtn;
     private Response response;
     private CustomPopup cp;
-    private XOLabel popupResponseMessageLabel;
-    private XOLabel passwordErrorLabel;
+    private CustomLabel popupResponseMessageLabel;
+    private CustomLabel passwordErrorLabel;
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$");
@@ -51,7 +51,7 @@ public class LoginScreenController implements Initializable {
         player = new OnlinePlayer();
         userNameField = new XOTextField("Enter Your UserName", 400, 50);
         passwordField = new XOPasswordField("Enter Your Password", 400, 50);
-        passwordErrorLabel = new XOLabel(AppConstants.warningIconPath, "", 500, 80, false);
+        passwordErrorLabel = new CustomLabel(AppConstants.warningIconPath, "");
 
         registerBtn = new XOButton("Register",
                 this::handleRegisterButtonAction,
