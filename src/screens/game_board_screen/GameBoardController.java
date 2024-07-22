@@ -8,6 +8,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import screens.game_board_screen.models.ScoreManager;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,6 +35,7 @@ import javafx.scene.text.TextAlignment;
 import screens.ai_mode_screen.AiModeController;
 import screens.game_board_screen.models.AIPlayer;
 import tictactoegame.TicTacToeGame;
+import utils.game_file_manager.GameFileManager;
 
 public class GameBoardController implements Initializable {
 
@@ -60,9 +63,15 @@ public class GameBoardController implements Initializable {
 
     private AIPlayer aiPlayer;
     private String aiDifficulty;
+    private GameFileManager gameFileManager = new GameFileManager();
+    private static boolean isRecordOn = false;
+    private static boolean isRecordabale = true;
+
+    private int[][] winningCells;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         OfflinePlayerHolder offlinePlayerHolder = OfflinePlayerHolder.getInstance();
         xPlayer = offlinePlayerHolder.getXPlayer();
         oPlayer = offlinePlayerHolder.getOPlayer();
@@ -103,6 +112,9 @@ public class GameBoardController implements Initializable {
         winLine.setStrokeWidth(5);
         winLine.setStroke(Color.RED);
         AnchorPane.getChildren().add(winLine);
+
+        UiUtils.setRecordBtuText("Record");
+
     }
 
     private GridPane createGameGrid() {
@@ -131,14 +143,24 @@ public class GameBoardController implements Initializable {
         }
 
         Cell cell = cells[row][col];
+
         if (cell.getPlayer() != null) {
             return;
         }
 
         Image image = xTurn ? xImage : oImage;
         cell.setPlayer(xTurn ? "X" : "O", image);
-
-        int[][] winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
+        
+        isRecordabale = false;
+        if (!isRecordabale) {
+            UiUtils.setRecordBtuStatus(!isRecordabale);
+        }
+        if (isRecordOn) {
+            // Record the event
+            gameFileManager.recordEvent(row, col, xTurn ? "X" : "O");
+        }
+        
+        winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
 
         if (winningCells != null) {
             drawWinningLine(winningCells);
@@ -146,9 +168,17 @@ public class GameBoardController implements Initializable {
             gameActive = false;
             String winnerName = xTurn ? xPlayer.getName() : (oPlayer != null ? oPlayer.getName() : "Ai");
             showVideoPopUp(winnerName, AppConstants.winVideoPath);
+
+            //End Recording
+            stopRecording();
+
         } else if (isBoardFull()) {
             gameActive = false;
             showVideoPopUp("No One", AppConstants.drawVideoPath);
+
+            //End Recording
+            stopRecording();
+
         } else {
             xTurn = !xTurn;
             if (!xTurn && oPlayer == null && gameActive) {
@@ -201,6 +231,7 @@ public class GameBoardController implements Initializable {
     }
 
     private void resetGame() {
+        isRecordabale = true;
         xTurn = true;
         gameActive = true;
         AIPlayer.resetMoveCount();
@@ -222,10 +253,15 @@ public class GameBoardController implements Initializable {
     }
 
     private void recordGame() {
-
+        //start recording
+        isRecordOn = true;
+        UiUtils.setRecordBtuText("Recording...");
+        UiUtils.setRecordBtuStatus(isRecordOn);
+        gameFileManager.startRecordingGame();
     }
 
     private void resignGame() {
+
         Text areUSure = new Text("Are you Sure");
         areUSure.setFont(Font.font("", FontWeight.BOLD, 24));
         areUSure.setFill(Color.GREY);
@@ -236,11 +272,16 @@ public class GameBoardController implements Initializable {
                 () -> {
                     cp.close();
                     navigateGameModeScreen();
+                    //End Recording
+                    stopRecording();
+                    //delete un compleate recorde
+                    gameFileManager.deleteRecordedFile();
                 },
                 AppConstants.oIconPath,
                 140,
                 40,
                 AppConstants.buttonClickedTonePath));
+
         cp.addCancelButton("No");
         cp.show();
 
@@ -309,6 +350,16 @@ public class GameBoardController implements Initializable {
         popup.show();
         mediaPlayer.play();
     }
+
+    private void stopRecording() {
+
+        isRecordOn = false;
+        UiUtils.setRecordBtuText("Record");
+        UiUtils.setRecordBtuStatus(isRecordOn);
+        gameFileManager.endRecordingGame();
+
+    }
+   
 }
 
 /*

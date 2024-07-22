@@ -24,9 +24,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 public abstract class UiUtils {
+ 
+ private static XOButton recordButton;
+ 
  public static VBox createScoreBox(Text scoreText, Runnable resignGameAction, Runnable recordGameAction) {
         XOButton resignButton = new XOButton("Resign", resignGameAction, AppConstants.xIconPath, 140, 40, AppConstants.buttonClickedTonePath);
-        XOButton recordButton = new XOButton("Record", recordGameAction, AppConstants.oIconPath, 140, 40, AppConstants.buttonClickedTonePath);
+        recordButton = new XOButton("", recordGameAction, AppConstants.oIconPath, 140, 40, AppConstants.buttonClickedTonePath);
 
         HBox buttonContainer = new HBox(20, resignButton, recordButton);
         buttonContainer.setAlignment(Pos.CENTER);
@@ -55,5 +58,11 @@ public abstract class UiUtils {
         Text text = new Text(playerName);
         text.setFont(Font.font("", FontWeight.BOLD, 24));
         return text;
+    }
+    public static void setRecordBtuText(String text) {
+       recordButton.setText(text);
+    }
+    public static void setRecordBtuStatus(boolean isDisable) {
+       recordButton.setDisable(isDisable);
     }
 }
