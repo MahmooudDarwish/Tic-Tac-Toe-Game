@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="anchorPane" prefHeight="768" prefWidth="1366" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.login_screen.LoginScreenController">
+    <children>
+           <fx:include source="/components/XOImage.fxml"/>
+        <VBox fx:id="screenContainer" alignment="CENTER" prefWidth="1366" prefHeight="768">
+        </VBox>
+    </children>
+</AnchorPane>
