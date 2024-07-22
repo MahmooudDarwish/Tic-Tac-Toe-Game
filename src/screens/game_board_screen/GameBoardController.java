@@ -2,6 +2,7 @@ package screens.game_board_screen;
 
 import components.CustomPopup;
 import components.XOButton;
+import java.io.File;
 import components.XOTextField;
 import java.io.File;
 import javafx.scene.image.Image;
@@ -15,10 +16,20 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import models.OfflinePlayer;
 import models.OfflinePlayerHolder;
 import screens.game_board_screen.models.Cell;
@@ -123,6 +134,16 @@ public class GameBoardController implements Initializable {
                 gp.add(borderButton, j, i);
             }
         }
+  
+        Text xPlayerText = new Text(xPlayer.getName());
+        xPlayerText.setFont(Font.font("", FontWeight.BOLD, 24));
+
+        Text oPlayerText = new Text((oPlayer != null ? oPlayer.getName() : "AI"));
+        oPlayerText.setFont(Font.font("", FontWeight.BOLD, 24));
+
+        Text scoreText = new Text("2 — 3");
+        scoreText.setFont(Font.font("", FontWeight.BOLD, 24));
+        scoreText.setFill(Color.GREY);
         return gp;
     }
 
@@ -163,6 +184,61 @@ If no winning move is available, check for a blocking move to prevent the oppone
 If neither is found, choose a random move from the available positions.
 This provides a more challenging game than the easy algorithm but is not unbeatable.
 Hard Algorithm: Minimax Algorithm
+
+        AnchorPane.getChildren().add(rootLayout);
+    }
+    private void showVideoPopUp(String winnerName, String videoPath) {
+
+        File videoFile = new File(videoPath);
+
+        Media media = new Media(videoFile.toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+
+        // Set the desired width and height for the MediaView
+        mediaView.setFitWidth(450);
+        mediaView.setFitHeight(300);
+
+        String popUpTitle = winnerName + " Wins";
+        Text winnerText = new Text(popUpTitle);
+
+        winnerText.setFont(Font.font("", FontWeight.BOLD, 24));
+        winnerText.setFill(Color.GREY);
+        winnerText.setTextAlignment(TextAlignment.CENTER);
+
+        CustomPopup popup = new CustomPopup(popUpTitle, 400, 450, false);
+
+        XOButton playAgainButton = new XOButton("Play Again",
+                () -> {
+                    popup.close();
+                    mediaPlayer.dispose();
+                    resetGame();
+                },
+                AppConstants.xIconPath,
+                100,
+                40,
+                AppConstants.buttonClickedTonePath);
+
+        XOButton exitButton = new XOButton("Exit",
+                () -> {
+                    popup.close();
+                    mediaPlayer.dispose();
+                    navigateGameModeScreen();
+                },
+                AppConstants.oIconPath,
+                100,
+                40,
+                AppConstants.buttonClickedTonePath);
+
+        popup.addContent(winnerText);
+        popup.addContent(mediaView);
+        popup.addContent(playAgainButton);
+        popup.addContent(exitButton);
+
+        popup.show();
+        mediaPlayer.play();
+    }
+}
 
 Name: Minimax Algorithm
 Description: This is a decision-making algorithm used in game theory and

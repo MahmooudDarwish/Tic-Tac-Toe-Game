@@ -29,7 +29,7 @@ public class TicTacToeGame extends Application {
 
         primaryStage = stage;
 
-        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.playScreenPath));
+        Parent root = FXMLLoader.load(getClass().getResource(AppConstants.connectionModePath));
 
         Scene scene = new Scene(root);
         primaryStage.setMinWidth(1366);

@@ -100,7 +100,7 @@ public class LoginScreenController implements Initializable {
         loginBtn.setDisable(userName.isEmpty() || !isPasswordValid);
     }
     private void handlePopup(String popupTitel,String iconePath,String message) {
-        popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 80, true);
+        popupResponseMessageLabel = new CustomLabel(iconePath, message);
         cp = new CustomPopup(popupTitel, 130, 600,true);
         cp.addContent(popupResponseMessageLabel);
         cp.addCancelButton("OK");
