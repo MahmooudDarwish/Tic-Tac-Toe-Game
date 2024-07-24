@@ -51,7 +51,7 @@ public class CustomPopup extends Stage {
         } else {
             content.add(object);
             // Add content before the buttonBox to ensure buttonBox stays at the bottom
-            mainVBox.getChildren().add(mainVBox.getChildren().size() - 1, (Node) object);
+            mainVBox.getChildren().add(mainVBox.getChildren().size()-1, (Node) object);
         }
     }
 

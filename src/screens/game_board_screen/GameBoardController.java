@@ -145,7 +145,9 @@ public class GameBoardController implements Initializable {
             scoreManager.updateScore(xTurn ? "X" : "O");
             gameActive = false;
             String winnerName = xTurn ? xPlayer.getName() : (oPlayer != null ? oPlayer.getName() : "Ai");
-            showVideoPopUp(winnerName, AppConstants.winVideoPath);
+            if(winnerName!="Ai"){
+            showVideoPopUp(winnerName, AppConstants.winVideoPath);}
+            else{ showVideoPopUp(winnerName, AppConstants.loseVideoPath);}
         } else if (isBoardFull()) {
             gameActive = false;
             showVideoPopUp("No One", AppConstants.drawVideoPath);
