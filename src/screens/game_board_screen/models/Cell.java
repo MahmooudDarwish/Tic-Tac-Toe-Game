@@ -5,6 +5,7 @@
  */
 package screens.game_board_screen.models;
 
+import components.XOButton;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
@@ -12,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import utils.constants.AppConstants;
 
 /**
  *

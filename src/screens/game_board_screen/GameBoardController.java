@@ -36,6 +36,7 @@ import screens.ai_mode_screen.AiModeController;
 import screens.game_board_screen.models.AIPlayer;
 import tictactoegame.TicTacToeGame;
 import utils.game_file_manager.GameFileManager;
+import utils.helpers.ToneManager;
 
 public class GameBoardController implements Initializable {
 
@@ -130,7 +131,9 @@ public class GameBoardController implements Initializable {
                 Button borderButton = cells[i][j].getButton();
                 final int row = i;
                 final int col = j;
-                borderButton.setOnAction(e -> handleButtonClick(row, col));
+                borderButton.setOnAction(e -> {
+                    handleButtonClick(row, col);
+                });
                 gp.add(borderButton, j, i);
             }
         }
@@ -141,6 +144,7 @@ public class GameBoardController implements Initializable {
         if (!gameActive) {
             return;
         }
+                    ToneManager.playTone(AppConstants.buttonClickedTonePath1);
 
         Cell cell = cells[row][col];
 
@@ -150,7 +154,7 @@ public class GameBoardController implements Initializable {
 
         Image image = xTurn ? xImage : oImage;
         cell.setPlayer(xTurn ? "X" : "O", image);
-        
+
         isRecordabale = false;
         if (!isRecordabale) {
             UiUtils.setRecordBtuStatus(!isRecordabale);
@@ -159,7 +163,7 @@ public class GameBoardController implements Initializable {
             // Record the event
             gameFileManager.recordEvent(row, col, xTurn ? "X" : "O");
         }
-        
+
         winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
 
         if (winningCells != null) {
@@ -167,14 +171,15 @@ public class GameBoardController implements Initializable {
             scoreManager.updateScore(xTurn ? "X" : "O");
             gameActive = false;
             String winnerName = xTurn ? xPlayer.getName() : (oPlayer != null ? oPlayer.getName() : "Ai");
-            showVideoPopUp(winnerName, AppConstants.winVideoPath);
 
             //End Recording
             stopRecording();
 
-            if(winnerName!="Ai"){
-            showVideoPopUp(winnerName, AppConstants.winVideoPath);}
-            else{ showVideoPopUp(winnerName, AppConstants.loseVideoPath);}
+            if (!"Ai".equals(winnerName)) {
+                showVideoPopUp(winnerName, AppConstants.winVideoPath);
+            } else {
+                showVideoPopUp(winnerName, AppConstants.loseVideoPath);
+            }
         } else if (isBoardFull()) {
             gameActive = false;
             showVideoPopUp("No One", AppConstants.drawVideoPath);
@@ -362,7 +367,7 @@ public class GameBoardController implements Initializable {
         gameFileManager.endRecordingGame();
 
     }
-   
+
 }
 
 /*

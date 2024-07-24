@@ -25,6 +25,7 @@ public abstract class AppConstants {
 
     //TONES
     public final static String buttonClickedTonePath = "/assets/tones/buttonClicked.wav";
+    public final static String buttonClickedTonePath1 = "/assets/tones/gameBoardButtonClicked.mp3";
 
     //VIDEOS
     public final static String winVideoPath = "src/assets/videos/winVideo.mp4";
