@@ -17,14 +17,15 @@ public class XOButton extends Button {
         ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
         iconView.setFitHeight(16);
         iconView.setFitWidth(16);
+        
+         setText("  "+label);
+       // Label textLabel = new Label(label); // The button text
 
-        Label textLabel = new Label(label); // The button text
-
-        HBox hbox = new HBox(iconView, textLabel); // Combine icon and text
+      /*  HBox hbox = new HBox(iconView); // Combine icon and text
         hbox.setSpacing(20); // Spacing between icon and text
-        hbox.setAlignment(Pos.CENTER_LEFT); // Align content to the left
+        hbox.setAlignment(Pos.CENTER_LEFT); */// Align content to the left
 
-        setGraphic(hbox); // Set the HBox as the button's graphic
+        setGraphic(iconView); // Set the HBox as the button's graphic
         setStyle("-fx-background-color: white;"
                 + " -fx-border-color: grey;"
                 + " -fx-border-width: 2px;"
@@ -41,4 +42,5 @@ public class XOButton extends Button {
             action.run();
         }); // Set the action
     }
+    
 }
