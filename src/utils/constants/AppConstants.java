@@ -17,8 +17,8 @@ public abstract class AppConstants {
     public final static String warningIconPath = "/assets/icons/warningIcone.png";
     public final static String doneIconPath = "/assets/icons/doneIcone.png";
     public final static String backIconPath = "/assets/icons/BackIcon.png";
-    public final static String userIconPath = "/assets/icons/UserIcon.png";
-    public final static String cupIconPath = "/assets/icons/CupIcon.png";
+    public final static String userIconPath = "/assets/icons/userIcon.png";
+    public final static String cupIconPath = "/assets/icons/cupIcon.png";
 
     //IMAGES
     public final static String bachgroundImagePath = "/assets/images/XOImage.jpg";

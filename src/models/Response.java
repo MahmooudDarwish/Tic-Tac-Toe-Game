@@ -13,7 +13,7 @@ package models;
 public class Response {
     private boolean isDone;
     private String message;
-    private Object player; // Adjust based on actual data structure
+    private Object player;
        
     // Default constructor
     public Response() {}

@@ -16,6 +16,7 @@ import components.XOButton;
 import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
+import models.OnlineLoginPlayerHolder;
 import models.OnlinePlayer;
 import models.Response;
 import tictactoegame.TicTacToeGame;
@@ -99,9 +100,10 @@ public class LoginScreenController implements Initializable {
         }
         loginBtn.setDisable(userName.isEmpty() || !isPasswordValid);
     }
-    private void handlePopup(String popupTitel,String iconePath,String message) {
+
+    private void handlePopup(String popupTitel, String iconePath, String message) {
         popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 80, true);
-        cp = new CustomPopup(popupTitel, 130, 600,true);
+        cp = new CustomPopup(popupTitel, 130, 600, true);
         cp.addContent(popupResponseMessageLabel);
         cp.addCancelButton("OK");
         cp.show();
@@ -124,23 +126,21 @@ public class LoginScreenController implements Initializable {
 
         try {
             // Send JSON to server and receive response
-            response = JsonSender.sendJsonAndReceiveResponse(json,AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
+            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
             System.out.println(response.toString());
 
             // Handle server response
-            if (!response.isSuccess())
-            {
-                handlePopup("Try Again",AppConstants.warningIconPath,response.getMessage());
+            if (!response.isSuccess()) {
+                handlePopup("Try Again", AppConstants.warningIconPath, response.getMessage());
+            } else {
+                OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
+                onlineLoginPlayerHolder.setPlayer(player);
+                TicTacToeGame.changeRoot(AppConstants.userHomePath);
             }
-            else
-            {
-                // Change application state
-                TicTacToeGame.changeRoot(AppConstants.connectionModePath);
-            }
-                    
+
         } catch (Exception e) {
             // Handle connection error
-            handlePopup("Server May Be Down",AppConstants.warningIconPath,"Connection Timed Out.\nPlease try again later.");
+            handlePopup("Server May Be Down", AppConstants.warningIconPath, "Connection Timed Out.\nPlease try again later.");
             e.printStackTrace();
         }
     }
