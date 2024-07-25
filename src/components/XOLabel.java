@@ -38,9 +38,7 @@ public class XOLabel extends HBox {
         setMinSize(width, height);
         setPrefSize(width, height);
         setMaxSize(width, height);
-        setPadding(new Insets(5, 10, 5, 10));
 
-        setSpacing(10);
         setAlignment(Pos.CENTER_LEFT);
         getChildren().addAll(iconView, label);
     }
