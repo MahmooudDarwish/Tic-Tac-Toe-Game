@@ -6,18 +6,22 @@
 package screens.user_home_screen;
 
 import components.CustomLabel;
+import components.CustomPopup;
 import components.XOButton;
+import components.XOLabel;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import models.OnlineLoginPlayerHolder;
 import models.OnlinePlayer;
+import models.Response;
 import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
+import utils.jsonutil.JsonSender;
+import utils.jsonutil.JsonUtil;
 
 /**
  * FXML Controller class
@@ -32,6 +36,7 @@ public class UserHomeController implements Initializable {
     private HBox topLabelContainer;
 
     private OnlinePlayer player;
+    private Response response;
 
     /**
      * Initializes the controller class.
@@ -50,12 +55,7 @@ public class UserHomeController implements Initializable {
                 200,
                 40,
                 AppConstants.buttonClickedTonePath);
-        XOButton historyBtn = new XOButton("History",
-                () -> handleHistoryButtonAction(),
-                AppConstants.oIconPath,
-                200,
-                40,
-                AppConstants.buttonClickedTonePath);
+
         XOButton logOutBtn = new XOButton("Log out",
                 () -> handleLogOutButtonAction(),
                 AppConstants.backIconPath,
@@ -66,7 +66,7 @@ public class UserHomeController implements Initializable {
         topLabelContainer.getChildren().addAll(userName, points);
 
         screenContainer.setSpacing(20);
-        screenContainer.getChildren().addAll(playBtn, historyBtn, logOutBtn);
+        screenContainer.getChildren().addAll(playBtn, logOutBtn);
 
     }
 
@@ -74,12 +74,41 @@ public class UserHomeController implements Initializable {
 
     }
 
-    private void handleHistoryButtonAction() {
+    private void handleLogOutButtonAction() {
 
+        player.setAction("logout");
+        String json = JsonUtil.toJson(player);
+        System.out.println(json);
+        try {
+            // Send JSON to server and receive response
+            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
+            System.out.println(response.toString());
+
+            // Handle server response
+            if (!response.isDone()) {
+                handlePopup("Try Again", AppConstants.warningIconPath, response.getMessage());
+            } else {
+                //handlePopup("Welcome to the Ultimate Tic Tac Toe Challenge!", AppConstants.doneIconPath, response.getMessage());
+                // Change application state
+                TicTacToeGame.changeRoot(AppConstants.loginPath);
+            }
+        } catch (Exception e) {
+            // Handle connection error
+            handlePopup("Server May Be Down", AppConstants.warningIconPath, "Connection Timed Out.\nPlease try again later.");
+            e.printStackTrace();
+        }
     }
 
-    private void handleLogOutButtonAction() {
-        TicTacToeGame.changeRoot(AppConstants.loginPath);
+    private void handlePopup(String popupTitel, String iconePath, String message) {
+
+        XOLabel popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 80, true);
+        CustomPopup cp = new CustomPopup(popupTitel, 130, 600, true);
+
+        cp.addContent(popupResponseMessageLabel);
+
+        cp.addCancelButton(
+                "OK");
+        cp.show();
     }
 
 }

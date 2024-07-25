@@ -10,7 +10,6 @@ import components.XOButton;
 import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
-import enumpackages.statusenum.EnumStatus.Status;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -42,10 +41,11 @@ public class SignupScreenController implements Initializable {
     private XOButton loginBtn;
     private XOLabel passwordErrorLabel;
     private XOLabel confirmPasswordErrorLabel;
-    
+
     private Response response;
     private CustomPopup cp;
     private XOLabel popupResponseMessageLabel;
+
     /**
      * Initializes the controller class.
      *
@@ -71,7 +71,7 @@ public class SignupScreenController implements Initializable {
                 40,
                 AppConstants.buttonClickedTonePath);
 
-         loginBtn = new XOButton("Login",
+        loginBtn = new XOButton("Login",
                 this::handleLoginButtonAction,
                 AppConstants.oIconPath,
                 200,
@@ -79,7 +79,7 @@ public class SignupScreenController implements Initializable {
                 AppConstants.buttonClickedTonePath);
 
         screenContainer.setSpacing(20);
-        screenContainer.getChildren().addAll(userNameField, passwordField, confirmPasswordField, passwordErrorLabel,confirmPasswordErrorLabel, registerBtn, loginBtn);
+        screenContainer.getChildren().addAll(userNameField, passwordField, confirmPasswordField, passwordErrorLabel, confirmPasswordErrorLabel, registerBtn, loginBtn);
 
         updateRegisterButtonState();
 
@@ -105,9 +105,8 @@ public class SignupScreenController implements Initializable {
             if (!isPasswordValid) {
                 passwordErrorLabel.setLabelVisible(true);
                 passwordErrorLabel.setText(
-                       "Password must be 8+ chars long and include:\n"
-                       + "uppercase, lowercase, digit, and special char."
-
+                        "Password must be 8+ chars long and include:\n"
+                        + "uppercase, lowercase, digit, and special char."
                 );
             }
 
@@ -148,45 +147,40 @@ public class SignupScreenController implements Initializable {
         System.out.println("Navigate to login screen");
         TicTacToeGame.changeRoot(AppConstants.loginPath);
     }
-    
-    private void handlePopup(String popupTitel,String iconePath,String message) {
-        popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 80, true);
-        cp = new CustomPopup(popupTitel, 130, 600,true);
+
+    private void handlePopup(String popupTitel, String iconePath, String message) {
+        popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 60, true);
+        cp = new CustomPopup(popupTitel, 150, 600, true);
         cp.addContent(popupResponseMessageLabel);
         cp.addCancelButton("OK");
         cp.show();
     }
-    private void handleRegisterButtonAction() {
-        System.out.println("Navigate to Register screen");
 
+    private void handleRegisterButtonAction() {
+        System.out.println("Navigate to Home screen");
+
+        // Set player credentials
+        player = new OnlinePlayer();
         player.setUserName(userNameField.getText());
         player.setPassword(passwordField.getText());
-        player.setPoints(0);
-        player.setStatus(Status.OFFLINE);
         player.setAction("register");
+
+        // Convert player object to JSON
         String json = JsonUtil.toJson(player);
-        System.out.println(json);
-        try {
-            // Send JSON to server and receive response
-            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
-            System.out.println(response.toString());
+        System.out.println("Sending JSON: " + json);
 
-            // Handle server response
-            if (!response.isSuccess())
-            {
-                handlePopup("Try Again",AppConstants.warningIconPath,response.getMessage());
+        // Send JSON and receive response
+        response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006);
+        if (response != null) {
+            System.out.println("Received response: " + response);
+            if (response.isDone()) {
+                handlePopup("Registration Successful", AppConstants.doneIconPath, "Registration successful.");
+                TicTacToeGame.changeRoot(AppConstants.loginPath); // Switch to login screen
+            } else {
+                handlePopup("Registration Failed", AppConstants.warningIconPath, "Registration failed: " + response.getMessage());
             }
-            else
-            {
-                handlePopup("Welcome to the Ultimate Tic Tac Toe Challenge!",AppConstants.doneIconPath,response.getMessage());
-                // Change application state
-                   TicTacToeGame.changeRoot(AppConstants.loginPath);
-            }
-        } catch (Exception e) {
-            // Handle connection error
-            handlePopup("Server May Be Down",AppConstants.warningIconPath,"Connection Timed Out.\nPlease try again later.");
-            e.printStackTrace();
+        } else {
+            handlePopup("Registration Error", AppConstants.warningIconPath, "Failed to connect to server.");
         }
-
     }
 }

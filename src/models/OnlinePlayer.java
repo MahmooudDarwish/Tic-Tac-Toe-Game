@@ -1,65 +1,61 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package models;
 
 import enumpackages.statusenum.EnumStatus.Status;
 
 /**
- *
- * @author Mohammed
+ * Represents an online player with extended response details.
  */
-public class OnlinePlayer {
-
+public class OnlinePlayer extends Response {
     private int id;
     private int points;
     private String userName;
     private String password;
     private Status status;
     private String action;
-    private String message; // For chat messages
-// Getter and Setter methods
 
-    public void setID(int id) {
-        this.id = id;
+    public OnlinePlayer() {
+        super(); // Call parent constructor
     }
 
-    public int getID() {
+    // Getters and Setters
+    public int getId() {
         return id;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public Status getStatus() {
-        return status;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getPassword() {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public int getPoints() {
         return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getAction() {
@@ -70,12 +66,17 @@ public class OnlinePlayer {
         this.action = action;
     }
 
-    public String getMessage() {
-        return message;
-    }
+ 
 
-    public void setMessage(String message) {
-        this.message = message;
+    @Override
+    public String toString() {
+        return "OnlinePlayer{" +
+                "id=" + id +
+                ", points=" + points +
+                ", userName='" + userName + '\'' +
+                ", status=" + status +
+                ", action='" + action + '\'' +
+                ", message='" + getMessage() + '\'' +
+                "} " + super.toString();
     }
-
 }

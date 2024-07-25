@@ -6,6 +6,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -18,8 +25,6 @@ public class CustomPopup extends Stage {
     private ArrayList<Object> content = new ArrayList<>();
     private VBox mainVBox;
     private HBox buttonBox;
-    private double offsetX;
-    private double offsetY;
 
     public CustomPopup(String title, double height, double width, boolean isClosable) {
 
@@ -37,12 +42,17 @@ public class CustomPopup extends Stage {
         setResizable(false);
         setScene(scene);
 
-        if (isClosable == false) {
+        if (!isClosable) {
             setOnCloseRequest(event -> event.consume());
             initStyle(StageStyle.UNDECORATED);
         }
 
         initModality(Modality.APPLICATION_MODAL);
+
+        Image backgroundImage = new Image(AppConstants.bluredbachgroundImagePath);
+        BackgroundSize backgroundSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true);
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        mainVBox.setBackground(new Background(background));
     }
 
     public void addContent(Object object) {
@@ -51,7 +61,7 @@ public class CustomPopup extends Stage {
         } else {
             content.add(object);
             // Add content before the buttonBox to ensure buttonBox stays at the bottom
-            mainVBox.getChildren().add(mainVBox.getChildren().size()-1, (Node) object);
+            mainVBox.getChildren().add(mainVBox.getChildren().size() - 1, (Node) object);
         }
     }
 

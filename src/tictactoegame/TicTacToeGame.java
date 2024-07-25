@@ -5,6 +5,8 @@
  */
 package tictactoegame;
 
+import components.CustomPopup;
+import components.XOLabel;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +29,6 @@ public class TicTacToeGame extends Application {
     public void start(Stage stage) throws Exception {
 
         primaryStage = stage;
-
         Parent root = FXMLLoader.load(getClass().getResource(AppConstants.connectionModePath));
 
         Scene scene = new Scene(root);
