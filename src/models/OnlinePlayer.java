@@ -12,85 +12,70 @@ import enumpackages.statusenum.EnumStatus.Status;
  * @author Mohammed
  */
 public class OnlinePlayer {
-   private int id;
-   private int points;
-   private String userName;
-   private String password;
-   private Status status;
-   private String action;
-   private String message; // For chat messages
+
+    private int id;
+    private int points;
+    private String userName;
+    private String password;
+    private Status status;
+    private String action;
+    private String message; // For chat messages
 // Getter and Setter methods
 
-   public void setID (int id)
-   {
-      this.id=id;
-   }
-   public int getID() {
-            return id;
+    public void setID(int id) {
+        this.id = id;
     }
-   public void setPassword(String password)
-   {
-       this.password=password;
-   }
-   public void setUserName(String userName)
-   {
-      this.userName=userName;
-   }
-   public void setPoints(int points)
-   {
-       this.points=points;
-   }
-   public void setStatus(Status status)
-   {
-       this.status=status;
-   }
-   
-       
 
-        public String getUserName() {
-            return userName;
-        }
+    public int getID() {
+        return id;
+    }
 
-        
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-        public Status getStatus() {
-            return status;
-        }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-        
-        public String getPassword() {
-            return password;
-        }
+    public void setPoints(int points) {
+        this.points = points;
+    }
 
-        
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-        public int getPoints() {
-            return points;
-        }
+    public String getUserName() {
+        return userName;
+    }
 
-        
+    public Status getStatus() {
+        return status;
+    }
 
-        public String getAction() {
-            return action;
-        }
+    public String getPassword() {
+        return password;
+    }
 
-        public void setAction(String action) {
-            this.action = action;
-        }
+    public int getPoints() {
+        return points;
+    }
 
-        public String getMessage() {
-            return message;
-        }
+    public String getAction() {
+        return action;
+    }
 
-        public void setMessage(String message) {
-            this.message = message;
-        }
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-  
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }
-
-        
-
-        
-    
-

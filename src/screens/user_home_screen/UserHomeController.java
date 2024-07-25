@@ -11,8 +11,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import models.OnlineLoginPlayerHolder;
+import models.OnlinePlayer;
 import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
 
@@ -28,13 +31,18 @@ public class UserHomeController implements Initializable {
     @FXML
     private HBox topLabelContainer;
 
+    private OnlinePlayer player;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        CustomLabel userName = new CustomLabel("User Name", AppConstants.userIconPath);
-        CustomLabel points = new CustomLabel("Points", AppConstants.cupIconPath);
+        OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
+        player = onlineLoginPlayerHolder.getPlayer();
+
+        CustomLabel userName = new CustomLabel("User Name: " + player.getUserName(), AppConstants.userIconPath);
+        CustomLabel points = new CustomLabel("Points: " + player.getPoints(), AppConstants.cupIconPath);
 
         XOButton playBtn = new XOButton("Play",
                 () -> handlePlayButtonAction(),
