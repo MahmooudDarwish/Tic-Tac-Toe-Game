@@ -42,6 +42,7 @@ public abstract class AppConstants {
     public final static String gameBoardScreenPath = "/screens/game_board_screen/GameBoardScreen.fxml";
     public final static String aiModeScreenPath = "/screens/ai_mode_screen/AiMode.fxml";
     public final static String enterServerIpScreen = "/screens/enter_ip_screen/EnterServerIp.fxml";
+    public final static String gameLoppyPath = "/screens/lobby_screen_mode/LobbyScreenUi.fxml";
 
     //SERVER
     private static String serverIp;

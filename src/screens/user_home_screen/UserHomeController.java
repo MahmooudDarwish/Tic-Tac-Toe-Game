@@ -10,6 +10,7 @@ import components.CustomPopup;
 import components.XOButton;
 import components.XOLabel;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -67,11 +68,14 @@ public class UserHomeController implements Initializable {
 
         screenContainer.setSpacing(20);
         screenContainer.getChildren().addAll(playBtn, logOutBtn);
+        
+        
+
 
     }
 
     private void handlePlayButtonAction() {
-
+        TicTacToeGame.changeRoot(AppConstants.gameLoppyPath);
     }
 
     private void handleLogOutButtonAction() {
@@ -80,7 +84,6 @@ public class UserHomeController implements Initializable {
         String json = JsonUtil.toJson(player);
         System.out.println(json);
         try {
-            // Send JSON to server and receive response
             response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
             System.out.println(response.toString());
 
@@ -88,12 +91,10 @@ public class UserHomeController implements Initializable {
             if (!response.isDone()) {
                 handlePopup("Try Again", AppConstants.warningIconPath, response.getMessage());
             } else {
-                //handlePopup("Welcome to the Ultimate Tic Tac Toe Challenge!", AppConstants.doneIconPath, response.getMessage());
-                // Change application state
+
                 TicTacToeGame.changeRoot(AppConstants.loginPath);
             }
         } catch (Exception e) {
-            // Handle connection error
             handlePopup("Server May Be Down", AppConstants.warningIconPath, "Connection Timed Out.\nPlease try again later.");
             e.printStackTrace();
         }
@@ -110,5 +111,7 @@ public class UserHomeController implements Initializable {
                 "OK");
         cp.show();
     }
+
+
 
 }
