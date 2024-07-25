@@ -22,6 +22,7 @@ public abstract class AppConstants {
 
     //IMAGES
     public final static String bachgroundImagePath = "/assets/images/XOImage.jpg";
+    public final static String bluredbachgroundImagePath = "/assets/images/BluredXOImage.jpg";
 
     //TONES
     public final static String buttonClickedTonePath = "/assets/tones/buttonClicked.wav";
@@ -40,22 +41,17 @@ public abstract class AppConstants {
     public final static String userHomePath = "/screens/user_home_screen/UserHomeScreen.fxml";
     public final static String gameBoardScreenPath = "/screens/game_board_screen/GameBoardScreen.fxml";
     public final static String aiModeScreenPath = "/screens/ai_mode_screen/AiMode.fxml";
-    public final static String enterServerIpScreen ="/screens/enter_ip_screen/EnterServerIp.fxml";
-
-
+    public final static String enterServerIpScreen = "/screens/enter_ip_screen/EnterServerIp.fxml";
 
     //SERVER
-    private  static String serverIp;
-    
-    public  static void  setServerIp (String ip)
-    {
-        serverIp=ip;
+    private static String serverIp;
+
+    public static void setServerIp(String ip) {
+        serverIp = ip;
     }
-    public  static String  getServerIp()
-    {
+
+    public static String getServerIp() {
         return serverIp;
     }
-    
-     
 
 }

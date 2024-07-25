@@ -1,37 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package models;
-
-/**
- *
- * @author Mohammed
- */
 
 public class Response {
     private boolean isDone;
     private String message;
-    private Object player;
-       
-    // Default constructor
-    public Response() {}
+    private OnlinePlayer player;
 
-    // Parameterized constructor
-    public Response(boolean success, String message, Object data) {
-        this.isDone = success;
-        this.message = message;
-        this.player = player;
-    }
-
-    // Getters and Setters
-    public boolean isSuccess() {
+    public boolean isDone() {
         return isDone;
     }
 
-    public void setSuccess(boolean success) {
-        this.isDone = success;
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
     public String getMessage() {
@@ -42,17 +21,17 @@ public class Response {
         this.message = message;
     }
 
-    public Object getData() {
+    public OnlinePlayer getPlayer() {
         return player;
     }
 
-    public void setData(Object data) {
-        this.player = data;
+    public void setPlayer(OnlinePlayer player) {
+        this.player = player;
     }
 
     @Override
     public String toString() {
-        return "ResponseDTO{" +
+        return "Response{" +
                 "isDone=" + isDone +
                 ", message='" + message + '\'' +
                 ", player=" + player +
