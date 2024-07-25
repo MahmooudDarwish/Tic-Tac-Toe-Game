@@ -35,9 +35,14 @@ public class ConnectionModeController implements Initializable {
                 40,
                 AppConstants.buttonClickedTonePath);
         XOButton onlineBtn = new XOButton("Online", () -> handleOnlineButtonAction(), AppConstants.oIconPath, 200, 40, AppConstants.buttonClickedTonePath);
-
+        XOButton backBtn = new XOButton("Back",
+                () -> handleBackButtonAction(),
+                AppConstants.backIconPath,
+                200,
+                40,
+                AppConstants.buttonClickedTonePath);
         buttonContainer.setSpacing(20);
-        buttonContainer.getChildren().addAll(offlineBtn, onlineBtn);
+        buttonContainer.getChildren().addAll(offlineBtn, onlineBtn,backBtn);
 
     }
 
@@ -50,6 +55,10 @@ public class ConnectionModeController implements Initializable {
     private void handleOnlineButtonAction() {
         System.out.println("Navigate to Login");
         TicTacToeGame.changeRoot(AppConstants.enterServerIpScreen);
+    }
+    private void handleBackButtonAction() {
+        System.out.println("Navigate to start Screen");
+        TicTacToeGame.changeRoot(AppConstants.startScreenPath);
     }
 
 }

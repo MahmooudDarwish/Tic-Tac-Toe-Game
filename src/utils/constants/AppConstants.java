@@ -19,7 +19,9 @@ public abstract class AppConstants {
     public final static String backIconPath = "/assets/icons/BackIcon.png";
     public final static String userIconPath = "/assets/icons/userIcon.png";
     public final static String cupIconPath = "/assets/icons/cupIcon.png";
-
+    public final static String playRecordsIconPath = "/assets/icons/playRecordsIcon.png";
+    public final static String playNewGameIconPath = "/assets/icons/playNewGameIcon.png";
+    public final static String logoutIconPath = "/assets/icons/logoutIcon.png";
     //IMAGES
     public final static String bachgroundImagePath = "/assets/images/XOImage.jpg";
     public final static String bluredbachgroundImagePath = "/assets/images/BluredXOImage.jpg";
@@ -43,7 +45,9 @@ public abstract class AppConstants {
     public final static String aiModeScreenPath = "/screens/ai_mode_screen/AiMode.fxml";
     public final static String enterServerIpScreen = "/screens/enter_ip_screen/EnterServerIp.fxml";
     public final static String gameLoppyPath = "/screens/lobby_screen_mode/LobbyScreenUi.fxml";
-
+    public final static String playerhistoryPath ="/screens/player_history_screen/PlayerHistory.fxml";
+    public final static String startScreenPath ="/screens/start_screen/StartScreen.fxml";
+    public final static String playRecordScreenPath ="/screens/play_record_screen/PlayRecord.fxml";
     //SERVER
     private static String serverIp;
 

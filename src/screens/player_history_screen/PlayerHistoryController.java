@@ -1,51 +1,49 @@
-package screens.lobby_screen_mode;
+package screens.player_history_screen;
 
-import components.CustomPopup;
-import components.XOLabel;
 import components.XOButton;
 import javafx.collections.FXCollections;
-import javafx.scene.control.ListCell;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import javafx.scene.layout.HBox;
-import tictactoegame.TicTacToeGame;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
-import models.OnlinePlayer;
+import utils.game_file_manager.GameFileManager;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import javafx.geometry.Pos;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
+import models.RecordName;
+import models.RecordNameHolder;
+import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
-import utils.jsonutil.JsonSender;
 
-public class LobbyScreenUiController implements Initializable {
+public class PlayerHistoryController implements Initializable {
 
     @FXML
-    AnchorPane anchorPane;
-    private List<OnlinePlayer> players;
-    @FXML
-    private ListView<OnlinePlayer> playersView;
+    private ListView<String> recordesView;
+    private List<String> recordesPaths;
+    static String selectedRecordName;
+    private RecordName recordName;
     private XOButton backBtn;
     private AudioClip hoverSound;
 
+    @FXML
+    private AnchorPane anchorPane;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Load hover sound effect
         hoverSound = new AudioClip(getClass().getResource(AppConstants.buttonClickedTonePath).toString());
 
         backBtn = new XOButton("Back",
@@ -54,36 +52,18 @@ public class LobbyScreenUiController implements Initializable {
                 200,
                 40,
                 AppConstants.buttonClickedTonePath);
-        anchorPane.setBackground(
-                new Background(new BackgroundImage(new Image(AppConstants.bachgroundImagePath), BackgroundRepeat.NO_REPEAT,
-                        BackgroundRepeat.NO_REPEAT,
-                        BackgroundPosition.DEFAULT,
-                        BackgroundSize.DEFAULT)));
-        handleFetchPlayersButtonAction();
-    }
+// Retrieve the file paths from GameFileManager
+        recordesPaths = GameFileManager.listRecordsFile("Records");
 
-    private void handleFetchPlayersButtonAction() {
-        // Create a JSON request with action "gamelobby"
-        String jsonRequest = "{\"action\":\"gamelobby\"}";
-        System.out.println("Sending JSON: " + jsonRequest);
+        // Optionally remove border and padding
+        recordesView.setStyle("-fx-border-width: 0; -fx-padding: 0;");
 
-        // Send JSON and receive response
-        players = JsonSender.sendJsonAndReceivePlayersList(jsonRequest, AppConstants.getServerIp(), 5006);
-        if (players != null) {
-            System.out.println("Received players list: " + players);
-            updateListViewWithPlayers(players);
-        } else {
-            handlePopup("Error", AppConstants.warningIconPath, "Failed to connect to server or no players found.");
-        }
-    }
-
-    private void updateListViewWithPlayers(List<OnlinePlayer> players) {
-        if (players != null) {
-            ObservableList<OnlinePlayer> items = FXCollections.observableArrayList(players);
+        if (recordesPaths != null) {
+            ObservableList<String> items = FXCollections.observableArrayList(recordesPaths);
 
             // Set the items to the ListView
-            playersView.setItems(items);
-            playersView.setStyle(
+            recordesView.setItems(items);
+            recordesView.setStyle(
                     "-fx-border-width: 0;"
                     + "-fx-padding: 0;"
                     + "-fx-background-image: url('/assets/images/BluredXOImage.jpg');"
@@ -91,9 +71,10 @@ public class LobbyScreenUiController implements Initializable {
                     + "-fx-background-size: cover;"
                     + "-fx-background-color: blue;" // Background color
             );
-            listVeiwProperties(playersView);
+            listVeiwProperties(recordesView);
+
         } else {
-            System.out.println("No players found or an error occurred.");
+            System.out.println("No files found or an error occurred.");
         }
 
         // Add back button to layout at the center bottom
@@ -102,49 +83,26 @@ public class LobbyScreenUiController implements Initializable {
         anchorPane.getChildren().add(backBtn);
     }
 
-    private void handlePopup(String popupTitle, String iconPath, String message) {
-        XOLabel popupResponseMessageLabel = new XOLabel(iconPath, message, 250, 80, true);
-        CustomPopup cp = new CustomPopup(popupTitle, 130, 600, true);
-
-        cp.addContent(popupResponseMessageLabel);
-        cp.addCancelButton("OK");
-        cp.show();
-    }
-
-    private void listVeiwProperties(ListView<OnlinePlayer> listVeiw) {
+    private void listVeiwProperties(ListView<String> listVeiw) {
         // Set a custom CellFactory
-        listVeiw.setCellFactory(lv -> new ListCell<OnlinePlayer>() {
+        listVeiw.setCellFactory(lv -> new ListCell<String>() {
             private static final String DEFAULT_STYLE = "-fx-padding: 20 0; -fx-alignment: CENTER; -fx-text-fill: black; -fx-font-size: 25px; -fx-font-family: Tahoma;";
             private static final String HOVER_STYLE = "-fx-padding: 20 0; -fx-alignment: CENTER; -fx-background-color: lightblue; -fx-text-fill: red; -fx-font-size: 25px; -fx-font-family: Tahoma;";
             private static final String SELECTED_STYLE = "-fx-padding: 20 0; -fx-alignment: CENTER; -fx-background-color: lightGray; -fx-text-fill: red; -fx-font-size: 25px; -fx-font-family: Tahoma;";
 
-            private HBox hbox = new HBox();
-            private Region spacer = new Region();
-            private Label nameLabel = new Label();
-            private Label scoreLabel = new Label();
-
             @Override
-            protected void updateItem(OnlinePlayer item, boolean empty) {
+            protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setGraphic(null);
                     setStyle(DEFAULT_STYLE);
                     setBackground(new Background(new BackgroundFill(
                             new Color(1, 1, 1, 0.5), // White with 50% opacity
                             CornerRadii.EMPTY,
                             Insets.EMPTY
                     )));
-                }else {
-                    nameLabel.setText("Player Name: " + item.getUserName());
-                    scoreLabel.setText("Score: " + item.getPoints());
-
-                    scoreLabel.setPadding(new Insets(0, 150, 0, 0));
-                    nameLabel.setPadding(new Insets(0, 0, 0, 150));
-
-                    HBox.setHgrow(spacer, Priority.ALWAYS);
-                    hbox.getChildren().addAll(nameLabel, spacer, scoreLabel);
-                    setGraphic(hbox);
+                } else {
+                    setText(item);
                     setStyle(isSelected() ? SELECTED_STYLE : DEFAULT_STYLE);
 
                     // Handle hover effect
@@ -152,6 +110,7 @@ public class LobbyScreenUiController implements Initializable {
                         if (!isSelected()) {
                             setStyle(HOVER_STYLE);
                             hoverSound.play(); // Play sound on hover
+
                         }
                     });
 
@@ -166,11 +125,17 @@ public class LobbyScreenUiController implements Initializable {
                         if (isNowSelected) {
                             setStyle(SELECTED_STYLE);
                             // Get the selected item from the ListView
-                            OnlinePlayer selectedItem = listVeiw.getSelectionModel().getSelectedItem();
+                            String selectedItem = recordesView.getSelectionModel().getSelectedItem();
 
                             // Print or use the selected item
-                            System.out.println("Selected Item: " + selectedItem.getUserName() + "       " + selectedItem.getPoints());
+                            System.out.println("Selected Item: " + selectedItem);
                             System.out.println("Navigate to Play Record Screen");
+                            recordName = new RecordName(selectedItem);
+
+                            RecordNameHolder recordNameHolder = RecordNameHolder.getInstance();
+                            recordNameHolder.setRecordName(recordName);
+                            TicTacToeGame.changeRoot(AppConstants.playRecordScreenPath);
+
                         } else {
                             setStyle(DEFAULT_STYLE);
                         }
@@ -178,10 +143,11 @@ public class LobbyScreenUiController implements Initializable {
                 }
             }
         });
+
     }
 
     private void handlBackButtonAction() {
         System.out.println("Navigate to player history screen");
-        TicTacToeGame.changeRoot(AppConstants.userHomePath);
+        TicTacToeGame.changeRoot(AppConstants.startScreenPath);
     }
 }
