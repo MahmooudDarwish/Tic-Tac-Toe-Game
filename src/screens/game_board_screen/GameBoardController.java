@@ -140,64 +140,61 @@ public class GameBoardController implements Initializable {
         return gp;
     }
 
-    private void handleButtonClick(int row, int col) {
-        if (!gameActive) {
-            return;
-        }
-                    ToneManager.playTone(AppConstants.buttonClickedTonePath1);
+   private void handleButtonClick(int row, int col) {
+    if (!gameActive) {
+        return;
+    }
+    ToneManager.playTone(AppConstants.buttonClickedTonePath1);
 
-        Cell cell = cells[row][col];
+    Cell cell = cells[row][col];
 
-        if (cell.getPlayer() != null) {
-            return;
-        }
+    if (cell.getPlayer() != null) {
+        return;
+    }
 
-        Image image = xTurn ? xImage : oImage;
-        cell.setPlayer(xTurn ? "X" : "O", image);
+    Image image = xTurn ? xImage : oImage;
+    cell.setPlayer(xTurn ? "X" : "O", image);
 
-        isRecordabale = false;
-        if (!isRecordabale) {
-            UiUtils.setRecordBtuStatus(!isRecordabale);
-        }
-        if (isRecordOn) {
-            // Record the event
-            gameFileManager.recordEvent(row, col, xTurn ? "X" : "O");
-        }
+    isRecordabale = false;
+    if (!isRecordabale) {
+        UiUtils.setRecordBtuStatus(!isRecordabale);
+    }
+    if (isRecordOn) {
+        // Record the event
+        gameFileManager.recordEvent(row, col, xTurn ? "X" : "O");
+    }
 
-        winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
+    winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
 
-        if (winningCells != null) {
-            drawWinningLine(winningCells);
-            scoreManager.updateScore(xTurn ? "X" : "O");
-            gameActive = false;
-            String winnerName = xTurn ? xPlayer.getName() : (oPlayer != null ? oPlayer.getName() : "Ai");
+    if (winningCells != null) {
+        drawWinningLine(winningCells);
+        scoreManager.updateScore(xTurn ? "X" : "O");
+        gameActive = false;
+        String winnerName = xTurn ? xPlayer.getName() : (oPlayer != null ? oPlayer.getName() : "Ai");
 
-            //End Recording
-            stopRecording();
+        // End Recording
+        stopRecording();
 
-            if (!"Ai".equals(winnerName)) {
-                showVideoPopUp(winnerName, AppConstants.winVideoPath);
-            } else {
-                showVideoPopUp(winnerName, AppConstants.loseVideoPath);
-            }
-        } else if (isBoardFull()) {
-            gameActive = false;
-            showVideoPopUp("No One", AppConstants.drawVideoPath);
-
-            //End Recording
-            stopRecording();
-
+        if (!"Ai".equals(winnerName)) {
+            showVideoPopUp(winnerName, AppConstants.winVideoPath);
         } else {
-            xTurn = !xTurn;
-            if (!xTurn && oPlayer == null && gameActive) {
-                if (AIPlayer.getMoveCount() < 4) {
-                    int[] aiMove = aiPlayer.getMove(aiDifficulty);
+            showVideoPopUp(winnerName, AppConstants.loseVideoPath);
+        }
+    } else if (isBoardFull()) {
+        gameActive = false;
+        showVideoPopUp("No One", AppConstants.drawVideoPath);
 
-                    handleButtonClick(aiMove[0], aiMove[1]);
-                }
-            }
+        // End Recording
+        stopRecording();
+
+    } else {
+        xTurn = !xTurn;
+        if (!xTurn && oPlayer == null && gameActive) {
+            int[] aiMove = aiPlayer.getMove(aiDifficulty);
+            handleButtonClick(aiMove[0], aiMove[1]);
         }
     }
+}
 
     private boolean isBoardFull() {
         for (int i = 0; i < cells.length; i++) {

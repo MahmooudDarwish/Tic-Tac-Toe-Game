@@ -1,9 +1,7 @@
 package screens.game_board_screen.models;
 
-import javafx.scene.image.Image;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+import javafx.scene.image.Image;
 
 public class AIPlayer {
 
@@ -13,7 +11,6 @@ public class AIPlayer {
     private String opponentSymbol;
     private WinChecker winChecker;
     private static int moveCount;
-    private static final int MAX_MOVES = 4;
 
     public AIPlayer(Cell[][] cells, Image aiImage, String aiSymbol, String opponentSymbol) {
         this.cells = cells;
@@ -21,30 +18,32 @@ public class AIPlayer {
         this.aiSymbol = aiSymbol;
         this.opponentSymbol = opponentSymbol;
         this.winChecker = new WinChecker(cells);
-        this.moveCount = 0; // Initialize move count
+        moveCount = 0;
+    }
+
+    public int[] getMove(String difficulty) {
+        switch (difficulty) {
+            case "hard":
+                return getHardMove();
+            case "medium":
+                return getMediumMove();
+            case "easy":
+            default:
+                return getEasyMove();
+        }
     }
 
     public int[] getEasyMove() {
-        
-        List<int[]> availableMoves = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (cells[i][j].getPlayer() == null) {
-                    availableMoves.add(new int[]{i, j});
-                }
-            }
-        }
-
-        if (availableMoves.isEmpty()) {
-            return null; // Indicate that no move can be made
-        }
-
-        return availableMoves.get(new Random().nextInt(availableMoves.size()));
+        Random random = new Random();
+        int row, col;
+        do {
+            row = random.nextInt(3);
+            col = random.nextInt(3);
+        } while (cells[row][col].getPlayer() != null);
+        return new int[]{row, col};
     }
 
     public int[] getMediumMove() {
-        
-        // Check if AI can win in the next move
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (cells[i][j].getPlayer() == null && isWinningMove(i, j, aiSymbol)) {
@@ -52,8 +51,6 @@ public class AIPlayer {
                 }
             }
         }
-
-        // Check if opponent can win in the next move, block it
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (cells[i][j].getPlayer() == null && isWinningMove(i, j, opponentSymbol)) {
@@ -61,33 +58,12 @@ public class AIPlayer {
                 }
             }
         }
-
-        // Otherwise, pick a random move
         return getEasyMove();
     }
 
     public int[] getHardMove() {
         int[] bestMove = findBestMove();
-        return bestMove;
-    }
-
-    public int[] getMove(String difficulty) {
-        int[] move;
-        switch (difficulty) {
-            case "hard":
-                move = getHardMove();
-                break;
-            case "medium":
-                move = getMediumMove();
-                break;
-            case "easy":
-            default:
-                move = getEasyMove();
-                break;
-        }
-
-        moveCount++; // Increment move counter after a successful move
-        return move;
+        return new int[]{bestMove[1], bestMove[2]};
     }
 
     private int[] findBestMove() {
@@ -98,7 +74,7 @@ public class AIPlayer {
             for (int j = 0; j < 3; j++) {
                 if (cells[i][j].getPlayer() == null) {
                     cells[i][j].setPlayer(aiSymbol, aiImage);
-                    int moveVal = minimax(0, false);
+                    int moveVal = minimax(0, false, Integer.MIN_VALUE, Integer.MAX_VALUE);
                     cells[i][j].setPlayer(null, null);
                     if (moveVal > bestVal) {
                         bestMove[0] = i;
@@ -117,7 +93,7 @@ public class AIPlayer {
         return bestMove;
     }
 
-    private int minimax(int depth, boolean isMax) {
+    private int minimax(int depth, boolean isMax, int alpha, int beta) {
         String result = checkWinner();
         if (result != null) {
             if (result.equals(aiSymbol)) {
@@ -135,8 +111,12 @@ public class AIPlayer {
                 for (int j = 0; j < 3; j++) {
                     if (cells[i][j].getPlayer() == null) {
                         cells[i][j].setPlayer(aiSymbol, aiImage);
-                        best = Math.max(best, minimax(depth + 1, !isMax));
+                        best = Math.max(best, minimax(depth + 1, !isMax, alpha, beta));
                         cells[i][j].setPlayer(null, null);
+                        alpha = Math.max(alpha, best);
+                        if (beta <= alpha) {
+                            break;
+                        }
                     }
                 }
             }
@@ -147,8 +127,12 @@ public class AIPlayer {
                 for (int j = 0; j < 3; j++) {
                     if (cells[i][j].getPlayer() == null) {
                         cells[i][j].setPlayer(opponentSymbol, null);
-                        best = Math.min(best, minimax(depth + 1, !isMax));
+                        best = Math.min(best, minimax(depth + 1, !isMax, alpha, beta));
                         cells[i][j].setPlayer(null, null);
+                        beta = Math.min(beta, best);
+                        if (beta <= alpha) {
+                            break;
+                        }
                     }
                 }
             }
@@ -202,11 +186,12 @@ public class AIPlayer {
         cells[row][col].setPlayer(null, null);
         return isWin;
     }
-    
+
     public static void resetMoveCount() {
         moveCount = 0;
     }
+
     public static int getMoveCount() {
-        return moveCount ;
+        return moveCount;
     }
 }
