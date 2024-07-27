@@ -71,19 +71,19 @@ public class AiModeController implements Initializable {
 
     private void handEasyButtonAction() {
         System.out.println("Navigate to EasyAi Mode");
-        aiMode = "Easy";
+        aiMode = "easy";
         TicTacToeGame.changeRoot(AppConstants.gameBoardScreenPath);
     }
 
     private void handleMediumButtonAction() {
         System.out.println("Navigate to MediumAi Mode");
-        aiMode = "Medium";
+        aiMode = "medium";
         TicTacToeGame.changeRoot(AppConstants.gameBoardScreenPath);
     }
 
     private void handleHardButtonAction() {
         System.out.println("Navigate to HardAi Mode");
-        aiMode = "Hard";
+        aiMode = "hard";
         TicTacToeGame.changeRoot(AppConstants.gameBoardScreenPath);
     }
 
