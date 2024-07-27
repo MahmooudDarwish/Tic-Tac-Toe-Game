@@ -10,81 +10,90 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonSyntaxException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import models.InOnlineResponse;
 import models.OnlinePlayer;
 import models.Response;
 
-/**
- * Utility class for sending JSON data to a server and receiving a response.
- */
 public class JsonSender {
 
-    private static final Gson gson = new Gson(); // Use a single Gson instance
+    private static final Gson gson = new Gson();
+    static Socket socket;
 
-    /**
-     * Sends JSON data to the server and receives a response.
-     *
-     * @param jsonData the JSON data to send
-     * @param serverAddress the server address
-     * @param serverPort the server port
-     * @return the Response object from the server
-     */
-    public static Response sendJsonAndReceiveResponse(String jsonData, String serverAddress, int serverPort) {
-        try (Socket socket = new Socket(serverAddress, serverPort);
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+    public static Response sendJsonAndReceiveResponse(String jsonData, String serverAddress, int serverPort, boolean sendCheckerSocket) throws IOException {
+        try {
+            // Connect to the server
+            socket = new Socket(serverAddress, serverPort);
 
-            // Send JSON data to the server
-            writer.write(jsonData + "\n"); // Add a newline character to signify end of message
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            writer.write(jsonData + "\n");
+
             writer.flush();
 
-            // Read the server's response
-            String jsonString = reader.readLine(); // Read JSON string from the server
+            // Read the response from the server
+            String jsonString = reader.readLine();
             if (jsonString != null) {
-                // Deserialize JSON to Response object
                 return gson.fromJson(jsonString, Response.class);
             } else {
-                System.err.println("Received null response from the server.");
+                System.out.println("Received null response from the server.");
                 return null;
             }
-
-        } catch (IOException e) {
-            System.err.println("IOException during JSON data transfer: " + e.getMessage());
-            e.printStackTrace();
+        } catch (JsonSyntaxException | IOException e) {
+            System.out.println("IOException during JSON data transfer: " + e.getMessage());
             return null;
         }
     }
 
-    public static ArrayList<OnlinePlayer> sendJsonAndReceivePlayersList(String jsonData, String serverAddress, int serverPort) {
+    public static Response receiveResponse(String serverAddress, int serverPort) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String jsonString = reader.readLine();
+            if (jsonString != null) {
+                return gson.fromJson(jsonString, Response.class);
+            } else {
+                System.out.println("Received null response from the server.");
+                return null;
+            }
+
+        } catch (IOException e) {
+            System.out.println("IOException during JSON data transfer: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static InOnlineResponse sendJsonAndReceivePlayersList(String jsonData, String serverAddress, int serverPort) {
         try (Socket socket = new Socket(serverAddress, serverPort);
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+             PrintWriter writer = new PrintWriter(socket.getOutputStream());
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
             writer.write(jsonData + "\n");
             writer.flush();
 
             String jsonString = reader.readLine();
-            System.out.println("Heree /n" + jsonString);
             if (jsonString != null) {
                 JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
                 JsonArray playersArray = jsonObject.getAsJsonArray("players");
-                ArrayList<OnlinePlayer> playersList = new ArrayList<>();
+                ArrayList<OnlinePlayer>  playersList = new ArrayList<>();
                 for (JsonElement element : playersArray) {
                     OnlinePlayer player = gson.fromJson(element, OnlinePlayer.class);
                     playersList.add(player);
                 }
 
-                return playersList;
+                // Assuming InOnlineResponse has a constructor that takes a List<OnlinePlayer>
+                return new InOnlineResponse(true, "Players received successfully", playersList);
             } else {
-                System.err.println("Received null response from the server.");
-                return null;
+                System.out.println("Received null response from the server.");
+                return new InOnlineResponse(false, "No response received from server", null);
             }
 
         } catch (IOException e) {
-            System.err.println("IOException during JSON data transfer: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            System.out.println("IOException during JSON data transfer: " + e.getMessage());
+            return new InOnlineResponse(false, "IOException occurred", null);
         }
     }
 }

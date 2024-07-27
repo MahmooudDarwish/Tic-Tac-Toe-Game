@@ -8,6 +8,7 @@ import components.XOButton;
 import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
+import java.io.IOException;
 import models.OnlineLoginPlayerHolder;
 import models.OnlinePlayer;
 import tictactoegame.TicTacToeGame;
@@ -17,6 +18,8 @@ import utils.jsonutil.JsonUtil;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import models.Response;
 
@@ -104,33 +107,36 @@ public class LoginScreenController implements Initializable {
      * Handle the login button action
      */
     private void handleLoginButtonAction() {
-        System.out.println("Navigate to Home screen");
+        try {
+            System.out.println("Navigate to Home screen");
 
-        // Set player credentials
-        OnlinePlayer player = new OnlinePlayer();
-        player.setUserName(userNameField.getText());
-        player.setPassword(passwordField.getText());
-        player.setAction("login");
+            // Set player credentials
+            OnlinePlayer player = new OnlinePlayer();
+            player.setUserName(userNameField.getText());
+            player.setPassword(passwordField.getText());
+            player.setAction("login");
 
-        // Convert player object to JSON
-        String json = JsonUtil.toJson(player);
-        System.out.println("Sending JSON: " + json);
+            // Convert player object to JSON
+            String json = JsonUtil.toJson(player);
+            System.out.println("Sending JSON: " + json);
 
-        // Send JSON and receive response
-        Response response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006);
-        if (response != null) {
-            System.out.println("Received response: " + response);
-            if (response.isDone()) {
-                OnlinePlayer onlinePlayer = response.getPlayer();
-                OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
-                onlineLoginPlayerHolder.setPlayer(onlinePlayer);
-                System.out.println("Go to user home path ");
-                TicTacToeGame.changeRoot(AppConstants.userHomePath);
+            // Send JSON and receive response
+            Response response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, true);
+            if (response != null) {
+                System.out.println("Received response: " + response);
+                if (response.isDone()) {
+                    OnlinePlayer onlinePlayer = response.getPlayer();
+                    OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
+                    onlineLoginPlayerHolder.setPlayer(onlinePlayer);
+                    TicTacToeGame.changeRoot(AppConstants.userHomePath);
+                } else {
+                    handlePopup("Login Failed", AppConstants.warningIconPath, "Login failed: " + response.getMessage());
+                }
             } else {
-                handlePopup("Login Failed", AppConstants.warningIconPath, "Login failed: " + response.getMessage());
+                handlePopup("Login Error", AppConstants.warningIconPath, "Failed to connect to server.");
             }
-        } else {
-            handlePopup("Login Error", AppConstants.warningIconPath, "Failed to connect to server.");
+        } catch (IOException ex) {
+            Logger.getLogger(LoginScreenController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

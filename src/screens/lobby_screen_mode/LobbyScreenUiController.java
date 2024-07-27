@@ -3,18 +3,22 @@ package screens.lobby_screen_mode;
 import components.CustomPopup;
 import components.XOLabel;
 import components.XOButton;
+import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ListCell;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.scene.layout.HBox;
 import tictactoegame.TicTacToeGame;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -30,22 +34,34 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
+import models.InOnlineResponse;
+import models.OnlineLoginPlayerHolder;
 import models.OnlinePlayer;
+import models.Response;
 import utils.constants.AppConstants;
 import utils.jsonutil.JsonSender;
+import utils.jsonutil.JsonUtil;
 
 public class LobbyScreenUiController implements Initializable {
 
     @FXML
     AnchorPane anchorPane;
-    private List<OnlinePlayer> players;
     @FXML
     private ListView<OnlinePlayer> playersView;
     private XOButton backBtn;
     private AudioClip hoverSound;
+    private PauseTransition updatePlayersListTransition;
+    private OnlinePlayer player;
+    private Response response;
+    private OnlineLoginPlayerHolder onlineLoginPlayerHolder;
+    private InOnlineResponse inOnlineResponse;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
+        player = onlineLoginPlayerHolder.getPlayer();
+
         hoverSound = new AudioClip(getClass().getResource(AppConstants.buttonClickedTonePath).toString());
 
         backBtn = new XOButton("Back",
@@ -59,21 +75,52 @@ public class LobbyScreenUiController implements Initializable {
                         BackgroundRepeat.NO_REPEAT,
                         BackgroundPosition.DEFAULT,
                         BackgroundSize.DEFAULT)));
+
         handleFetchPlayersButtonAction();
+        startPeriodicPlayerListUpdate();
     }
 
     private void handleFetchPlayersButtonAction() {
-        // Create a JSON request with action "gamelobby"
         String jsonRequest = "{\"action\":\"gamelobby\"}";
         System.out.println("Sending JSON: " + jsonRequest);
 
-        // Send JSON and receive response
-        players = JsonSender.sendJsonAndReceivePlayersList(jsonRequest, AppConstants.getServerIp(), 5006);
-        if (players != null) {
-            System.out.println("Received players list: " + players);
-            updateListViewWithPlayers(players);
+        inOnlineResponse = JsonSender.sendJsonAndReceivePlayersList(jsonRequest, AppConstants.getServerIp(), 5006);
+        if (inOnlineResponse != null) {
+            System.out.println("Received players list: " + inOnlineResponse.getPlayers());
+            updateListViewWithPlayers(inOnlineResponse.getPlayers());
         } else {
             handlePopup("Error", AppConstants.warningIconPath, "Failed to connect to server or no players found.");
+        }
+        /*
+        onlineLoginPlayerHolder.startGetOnlinePlayerThread();
+        List<OnlinePlayer> players = onlineLoginPlayerHolder.getPlayers();
+
+        if (players != null) {
+            System.out.println("Received players list: " + players);
+
+            // Update ListView with players on the JavaFX Application Thread
+            Platform.runLater(() -> updateListViewWithPlayers(players));
+        } else {
+            Platform.runLater(() -> handlePopup("Error", AppConstants.warningIconPath, "Failed to connect to server or no players found."));
+        }
+         */
+
+    }
+
+    private void startPeriodicPlayerListUpdate() {
+        updatePlayersListTransition = new PauseTransition(Duration.seconds(5));
+        updatePlayersListTransition.setOnFinished(event -> {
+            handleFetchPlayersButtonAction();
+            updatePlayersListTransition.playFromStart();
+        });
+        updatePlayersListTransition.play();
+    }
+
+    private void stopPeriodicPlayerListUpdate() {
+        if (updatePlayersListTransition != null) {
+            updatePlayersListTransition.stop();
+            //onlineLoginPlayerHolder.stopGetOnlinePlayerThread();
+
         }
     }
 
@@ -96,10 +143,11 @@ public class LobbyScreenUiController implements Initializable {
             System.out.println("No players found or an error occurred.");
         }
 
-        // Add back button to layout at the center bottom
-        AnchorPane.setBottomAnchor(backBtn, 20.0);  // Distance from the bottom
-        AnchorPane.setLeftAnchor(backBtn, 600.0); // Center horizontally
-        anchorPane.getChildren().add(backBtn);
+        if (!anchorPane.getChildren().contains(backBtn)) {
+            AnchorPane.setBottomAnchor(backBtn, 20.0);  // Distance from the bottom
+            AnchorPane.setLeftAnchor(backBtn, 600.0); // Center horizontally
+            anchorPane.getChildren().add(backBtn);
+        }
     }
 
     private void handlePopup(String popupTitle, String iconPath, String message) {
@@ -131,11 +179,11 @@ public class LobbyScreenUiController implements Initializable {
                     setGraphic(null);
                     setStyle(DEFAULT_STYLE);
                     setBackground(new Background(new BackgroundFill(
-                            new Color(1, 1, 1, 0.5), // White with 50% opacity
+                            new Color(1, 1, 1, 0.5),
                             CornerRadii.EMPTY,
                             Insets.EMPTY
                     )));
-                }else {
+                } else {
                     nameLabel.setText("Player Name: " + item.getUserName());
                     scoreLabel.setText("Score: " + item.getPoints());
 
@@ -143,6 +191,8 @@ public class LobbyScreenUiController implements Initializable {
                     nameLabel.setPadding(new Insets(0, 0, 0, 150));
 
                     HBox.setHgrow(spacer, Priority.ALWAYS);
+                    hbox.getChildren().clear();
+
                     hbox.getChildren().addAll(nameLabel, spacer, scoreLabel);
                     setGraphic(hbox);
                     setStyle(isSelected() ? SELECTED_STYLE : DEFAULT_STYLE);
@@ -167,6 +217,30 @@ public class LobbyScreenUiController implements Initializable {
                             setStyle(SELECTED_STYLE);
                             // Get the selected item from the ListView
                             OnlinePlayer selectedItem = listVeiw.getSelectionModel().getSelectedItem();
+                            try {
+                                player.setAction("wanttoplay");
+                                player.setMessage(selectedItem.getUserName());
+                                //String jsonRequest = "{\"action\":\"wanttoplay\"}";
+                                //System.out.println("Sending JSON: " + jsonRequest);
+                                // Convert player object to JSON
+                                String json = JsonUtil.toJson(player);
+                                System.out.println("Sending JSON: " + json);
+                                // Send JSON and receive response
+                                response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, true);
+                            } catch (IOException ex) {
+                                Logger.getLogger(LobbyScreenUiController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            if (response != null) {
+                                if (response.isDone()) {
+                                    System.out.println(response);
+                                    System.out.println("Yes We can Play");
+                                } else {
+                                    handlePopup("Error", AppConstants.warningIconPath, selectedItem.getUserName()+"Is busy");
+
+                                }
+                            } else {
+                                handlePopup("Error", AppConstants.warningIconPath, "Failed to connect to server or"+ selectedItem.getUserName()+ "no players found.");
+                            }
 
                             // Print or use the selected item
                             System.out.println("Selected Item: " + selectedItem.getUserName() + "       " + selectedItem.getPoints());
@@ -181,6 +255,9 @@ public class LobbyScreenUiController implements Initializable {
     }
 
     private void handlBackButtonAction() {
+        // Stop the periodic update before navigating away
+        stopPeriodicPlayerListUpdate();
+
         System.out.println("Navigate to player history screen");
         TicTacToeGame.changeRoot(AppConstants.userHomePath);
     }

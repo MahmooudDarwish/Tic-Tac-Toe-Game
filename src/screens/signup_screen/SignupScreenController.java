@@ -10,8 +10,11 @@ import components.XOButton;
 import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
@@ -157,30 +160,34 @@ public class SignupScreenController implements Initializable {
     }
 
     private void handleRegisterButtonAction() {
-        System.out.println("Navigate to Home screen");
+        try {
+            System.out.println("Navigate to Home screen");
 
-        // Set player credentials
-        player = new OnlinePlayer();
-        player.setUserName(userNameField.getText());
-        player.setPassword(passwordField.getText());
-        player.setAction("register");
+            // Set player credentials
+            player = new OnlinePlayer();
+            player.setUserName(userNameField.getText());
+            player.setPassword(passwordField.getText());
+            player.setAction("register");
 
-        // Convert player object to JSON
-        String json = JsonUtil.toJson(player);
-        System.out.println("Sending JSON: " + json);
+            // Convert player object to JSON
+            String json = JsonUtil.toJson(player);
+            System.out.println("Sending JSON: " + json);
 
-        // Send JSON and receive response
-        response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006);
-        if (response != null) {
-            System.out.println("Received response: " + response);
-            if (response.isDone()) {
-                handlePopup("Registration Successful", AppConstants.doneIconPath, "Registration successful.");
-                TicTacToeGame.changeRoot(AppConstants.loginPath); // Switch to login screen
+            // Send JSON and receive response
+            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, false);
+            if (response != null) {
+                System.out.println("Received response: " + response);
+                if (response.isDone()) {
+                    handlePopup("Registration Successful", AppConstants.doneIconPath, "Registration successful.");
+                    TicTacToeGame.changeRoot(AppConstants.loginPath); // Switch to login screen
+                } else {
+                    handlePopup("Registration Failed", AppConstants.warningIconPath, "Registration failed: " + response.getMessage());
+                }
             } else {
-                handlePopup("Registration Failed", AppConstants.warningIconPath, "Registration failed: " + response.getMessage());
+                handlePopup("Registration Error", AppConstants.warningIconPath, "Failed to connect to server.");
             }
-        } else {
-            handlePopup("Registration Error", AppConstants.warningIconPath, "Failed to connect to server.");
+        } catch (IOException ex) {
+            Logger.getLogger(SignupScreenController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

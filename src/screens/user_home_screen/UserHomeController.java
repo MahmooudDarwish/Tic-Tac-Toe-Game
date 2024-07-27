@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens.user_home_screen;
 
 import components.CustomLabel;
@@ -10,7 +5,6 @@ import components.CustomPopup;
 import components.XOButton;
 import components.XOLabel;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,15 +14,11 @@ import models.OnlineLoginPlayerHolder;
 import models.OnlinePlayer;
 import models.Response;
 import tictactoegame.TicTacToeGame;
+import models.ServerStatusChecker;
 import utils.constants.AppConstants;
 import utils.jsonutil.JsonSender;
 import utils.jsonutil.JsonUtil;
 
-/**
- * FXML Controller class
- *
- * @author Mahmoud
- */
 public class UserHomeController implements Initializable {
 
     @FXML
@@ -38,14 +28,14 @@ public class UserHomeController implements Initializable {
 
     private OnlinePlayer player;
     private Response response;
+    private OnlineLoginPlayerHolder onlineLoginPlayerHolder;
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
+        onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
         player = onlineLoginPlayerHolder.getPlayer();
+
+        onlineLoginPlayerHolder.startServerListener();
 
         CustomLabel userName = new CustomLabel("User Name: " + player.getUserName(), AppConstants.userIconPath);
         CustomLabel points = new CustomLabel("Points: " + player.getPoints(), AppConstants.cupIconPath);
@@ -68,10 +58,8 @@ public class UserHomeController implements Initializable {
 
         screenContainer.setSpacing(20);
         screenContainer.getChildren().addAll(playBtn, logOutBtn);
-        
-        
 
-
+        ServerStatusChecker.startPeriodicServerMessageUpdate(onlineLoginPlayerHolder);
     }
 
     private void handlePlayButtonAction() {
@@ -79,19 +67,16 @@ public class UserHomeController implements Initializable {
     }
 
     private void handleLogOutButtonAction() {
-
         player.setAction("logout");
         String json = JsonUtil.toJson(player);
-        System.out.println(json);
         try {
-            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006); // Adjust server address and port as needed
+            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, false); // Adjust server address and port as needed
             System.out.println(response.toString());
 
-            // Handle server response
             if (!response.isDone()) {
                 handlePopup("Try Again", AppConstants.warningIconPath, response.getMessage());
             } else {
-
+                onlineLoginPlayerHolder.clearPlayer();
                 TicTacToeGame.changeRoot(AppConstants.loginPath);
             }
         } catch (Exception e) {
@@ -100,18 +85,11 @@ public class UserHomeController implements Initializable {
         }
     }
 
-    private void handlePopup(String popupTitel, String iconePath, String message) {
-
-        XOLabel popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 80, true);
-        CustomPopup cp = new CustomPopup(popupTitel, 130, 600, true);
-
+    private void handlePopup(String popupTitle, String iconPath, String message) {
+        XOLabel popupResponseMessageLabel = new XOLabel(iconPath, message, 250, 80, true);
+        CustomPopup cp = new CustomPopup(popupTitle, 150, 600, true);
         cp.addContent(popupResponseMessageLabel);
-
-        cp.addCancelButton(
-                "OK");
+        cp.addCancelButton("OK");
         cp.show();
     }
-
-
-
 }
