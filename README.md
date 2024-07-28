@@ -1,5 +1,7 @@
 Tic Tac Toe Game Server
-This repository contains the server code for a Tic Tac Toe game that supports both offline and networked play. You can play with a friend either on the same device or over the same network.
+
+
+This repository contains  a Tic Tac Toe game that supports both offline and networked play. You can play with a friend either on the same device or over the same network.
 
 Getting Started
 To get started with this project, follow these steps:
