@@ -174,7 +174,7 @@ public class SignupScreenController implements Initializable {
             System.out.println("Sending JSON: " + json);
 
             // Send JSON and receive response
-            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, false);
+            response = JsonSender.sendJsonAndReceiveResponse(json);
             if (response != null) {
                 System.out.println("Received response: " + response);
                 if (response.isDone()) {

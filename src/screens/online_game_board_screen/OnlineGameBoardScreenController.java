@@ -1,9 +1,10 @@
-package screens.game_board_screen;
+package screens.online_game_board_screen;
 
 import components.CustomPopup;
 import components.XOButton;
 import components.XOTextField;
 import java.io.File;
+import java.io.IOException;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import screens.game_board_screen.models.ScoreManager;
@@ -11,6 +12,11 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -32,53 +38,57 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import screens.ai_mode_screen.AiModeController;
-import screens.game_board_screen.models.AIPlayer;
+import javafx.util.Duration;
+import models.OnlineLoginPlayerHolder;
+import models.OnlinePlayer;
+import models.OnlinePlayerHolder;
+import models.Response;
+import models.ServerStatusChecker;
 import tictactoegame.TicTacToeGame;
 import utils.constants.BasicColors;
 import utils.game_file_manager.GameFileManager;
 import utils.helpers.ToneManager;
+import utils.jsonutil.JsonSender;
+import utils.jsonutil.JsonUtil;
 
-public class GameBoardController implements Initializable {
+public class OnlineGameBoardScreenController implements Initializable {
 
     private boolean xTurn;
     private boolean gameActive;
-
-    private OfflinePlayer xPlayer;
-    private OfflinePlayer oPlayer;
-
+    private OnlinePlayer xPlayer;
+    private OnlinePlayer oPlayer;
     private Image xImage;
     private Image oImage;
-
     private Cell[][] cells;
     private WinChecker winChecker;
     private ScoreManager scoreManager;
-
     @FXML
     private AnchorPane AnchorPane;
     @FXML
     private VBox xPlayerColumn;
     @FXML
     private VBox oPlayerColumn;
-
     private Line winLine;
-
-    private AIPlayer aiPlayer;
-    private String aiDifficulty;
     private GameFileManager gameFileManager = new GameFileManager();
     private static boolean isRecordOn = false;
     private static boolean isRecordabale = true;
-
     private int[][] winningCells;
+    OnlineLoginPlayerHolder onlineLoginPlayerHolder;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        OnlinePlayerHolder onlinePlayerHolder = OnlinePlayerHolder.getInstance();
+        onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
 
-        OfflinePlayerHolder offlinePlayerHolder = OfflinePlayerHolder.getInstance();
-        xPlayer = offlinePlayerHolder.getXPlayer();
-        oPlayer = offlinePlayerHolder.getOPlayer();
+        xPlayer = onlinePlayerHolder.getXPlayer();
+        oPlayer = onlinePlayerHolder.getOPlayer();
 
-        xTurn = true;
+        System.out.println("=====================================================");
+        System.out.println(xPlayer.getUserName());
+        System.out.println(oPlayer.getUserName());
+        System.out.println("=====================================================");
+
+        xTurn = xPlayer.getUserName().equals(onlineLoginPlayerHolder.getPlayer().getUserName());
         gameActive = true;
 
         xImage = new Image(AppConstants.xIconPath);
@@ -94,11 +104,6 @@ public class GameBoardController implements Initializable {
 
         GridPane gameGrid = createGameGrid();
         configurePlayerBoxes();
-
-        if (oPlayer == null) {
-            aiPlayer = new AIPlayer(cells, oImage, "O", "X");
-            aiDifficulty = AiModeController.getAiMode(); // Default difficulty level
-        }
 
         HBox mainLayout = new HBox(50, xPlayerColumn, gameGrid, oPlayerColumn);
         mainLayout.setAlignment(Pos.CENTER);
@@ -117,6 +122,144 @@ public class GameBoardController implements Initializable {
 
         UiUtils.setRecordBtuText("Record");
 
+        if (!xTurn) {
+            // disableGameButtons();
+        }
+
+        listenForOpponentMove();
+    }
+
+    private void listenForOpponentMove() {
+        Thread thread = new Thread(() -> {
+            while (gameActive) {
+                try {
+                    String serverMessage = "";
+                    // Replace with actual method to get the message from the server
+                    if (onlineLoginPlayerHolder.getServerMessage() != null) {
+                        serverMessage = onlineLoginPlayerHolder.getServerMessage().getMessage();
+                    }
+                    if (serverMessage.contains("move")) {
+                        final String finalServerMessage = serverMessage; // Make the variable effectively final
+                        Platform.runLater(() -> startGameRecord(finalServerMessage));
+                    }
+
+                    // Sleep for a short period to avoid busy-waiting
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    System.err.println("Listening thread interrupted: " + e.getMessage());
+                }
+            }
+        });
+
+        thread.setDaemon(true); // Ensure the thread will not prevent the application from exiting
+        thread.start();
+    }
+
+    private void startGameRecord(String moveData) {
+        try {
+            // Log the incoming move data
+            System.out.println("Received move data: " + moveData);
+
+            // Clean and parse the move data
+            moveData = moveData.replace("move", "").trim();
+            String[] parts = moveData.split(",");
+
+            
+            // Parse row and column indices and the player's move
+            int rowIndex = Integer.parseInt(parts[0].trim());
+            int colIndex = Integer.parseInt(parts[1].trim());
+            String move = parts[2].trim();
+
+            System.out.println("Parsed move data: rowIndex=" + rowIndex + ", colIndex=" + colIndex + ", move=" + move);
+
+            // Validate the parsed indices
+            if (rowIndex >= 0 && rowIndex < 3 && colIndex >= 0 && colIndex < 3) {
+                Cell cell = cells[rowIndex][colIndex];
+
+                if (cell != null) {
+                    // Set the player's move on the cell
+                    Image image = "X".equals(move) ? xImage : oImage;
+                    cell.setPlayer(move, image);
+
+                    System.out.println("Player " + move + " moved to cell (" + rowIndex + ", " + colIndex + ")");
+
+                    // Check for a winning condition
+                    winningCells = winChecker.checkWin(rowIndex, colIndex, move);
+                    if (winningCells != null) {
+                        drawWinningLine(winningCells);
+                        System.out.println("Winning condition met.");
+                    } else {
+                        System.out.println("No winning condition met.");
+                    }
+                } else {
+                    System.err.println("Cell is null at (" + rowIndex + ", " + colIndex + ")");
+                }
+            } else {
+                System.err.println("Invalid indices: (" + rowIndex + ", " + colIndex + ")");
+            }
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid number format in move data: " + moveData + ". Error: " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Move data out of bounds: " + moveData + ". Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error processing move data: " + e.getMessage());
+        }
+    }
+
+    private void handleButtonClick(int row, int col) {
+        if (!gameActive) {
+            System.out.println("handleButtonClick - Game is not active.");
+            return;
+        }
+
+        ToneManager.playTone(AppConstants.buttonClickedTonePath1);
+
+        Cell cell = cells[row][col];
+        if (cell.getPlayer() != null) {
+            System.out.println("handleButtonClick - Cell (" + row + ", " + col + ") is already occupied.");
+            return;
+        }
+
+        Image image = xTurn ? xImage : oImage;
+        cell.setPlayer(xTurn ? "X" : "O", image);
+        System.out.println("handleButtonClick - Player " + (xTurn ? "X" : "O") + " moved to cell (" + row + ", " + col + ")");
+
+        sendMoveToServer(row, col);
+
+        isRecordabale = false;
+        if (!isRecordabale) {
+            UiUtils.setRecordBtuStatus(!isRecordabale);
+            System.out.println("handleButtonClick - Record button status set to disabled.");
+        }
+
+        if (isRecordOn) {
+            gameFileManager.recordEvent(row, col, xTurn ? "X" : "O");
+            System.out.println("handleButtonClick - Event recorded for player " + (xTurn ? "X" : "O"));
+        }
+
+        winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
+
+        if (winningCells != null) {
+            drawWinningLine(winningCells);
+            scoreManager.updateScore(xTurn ? "X" : "O");
+            gameActive = false;
+            System.out.println("handleButtonClick - Winning condition met. Game over.");
+
+            String winnerName = xTurn ? xPlayer.getUserName() : (oPlayer != null ? oPlayer.getUserName() : "Ai");
+
+            stopRecording();
+
+            if (!"Ai".equals(winnerName)) {
+                showVideoPopUp(winnerName, AppConstants.winVideoPath);
+            } else {
+                showVideoPopUp(winnerName, AppConstants.loseVideoPath);
+            }
+        } else if (isBoardFull()) {
+            gameActive = false;
+            System.out.println("handleButtonClick - Board is full. Game over with no winner.");
+            showVideoPopUp("No One", AppConstants.drawVideoPath);
+            stopRecording();
+        }
     }
 
     private GridPane createGameGrid() {
@@ -125,7 +268,8 @@ public class GameBoardController implements Initializable {
         gp.setHgap(5);
         gp.setVgap(5);
         gp.setPadding(new Insets(20));
-//  for (int i = 0; i <= 2; i++) {
+
+//        for (int i = 0; i <= 2; i++) {
 //            for (int j = 0; j <= 2; j++) {
 //                cells[i][j] = new Cell();
 //                Button borderButton = cells[i][j].getButton();
@@ -137,76 +281,63 @@ public class GameBoardController implements Initializable {
 //                gp.add(borderButton, j, i);
 //            }
 //        }
+        
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 cells[i][j] = new Cell();
                 Button borderButton = cells[i][j].getButton();
                 final int row = i;
                 final int col = j;
-                borderButton.setOnAction(e -> {
-                    handleButtonClick(row, col);
-                });
+                borderButton.setOnAction(e -> handleButtonClick(row, col));
                 gp.add(borderButton, j, i);
             }
         }
-        return gp;
+
+         return gp;
     }
 
-   private void handleButtonClick(int row, int col) {
-    if (!gameActive) {
-        return;
+    private void sendMoveToServer(int row, int col) {
+        Thread thread = new Thread(() -> {
+            try {
+                OnlinePlayer onlinePlayer = new OnlinePlayer();
+                onlinePlayer.setAction("move");
+
+                onlinePlayer.setUserName(xTurn ? oPlayer.getUserName() : xPlayer.getUserName());
+
+                String moveDecider = row + "," + col + "," + (xTurn ? "X" : "O");
+                onlinePlayer.setMessage(moveDecider);
+
+                String json = JsonUtil.toJson(onlinePlayer);
+                Response response = JsonSender.sendJsonAndReceiveResponse(json);
+
+                if (response == null || !response.isDone()) {
+                    System.out.println("Move was not successful.");
+                }
+            } catch (IOException ex) {
+                // Handle the exception appropriately
+            }
+        });
+
+        thread.start();
     }
-    ToneManager.playTone(AppConstants.buttonClickedTonePath1);
 
-    Cell cell = cells[row][col];
-
-    if (cell.getPlayer() != null) {
-        return;
-    }
-
-    Image image = xTurn ? xImage : oImage;
-    cell.setPlayer(xTurn ? "X" : "O", image);
-
-    isRecordabale = false;
-    if (!isRecordabale) {
-        UiUtils.setRecordBtuStatus(!isRecordabale);
-    }
-    if (isRecordOn) {
-        // Record the event
-        gameFileManager.recordEvent(row, col, xTurn ? "X" : "O");
-    }
-
-    winningCells = winChecker.checkWin(row, col, xTurn ? "X" : "O");
-
-    if (winningCells != null) {
-        drawWinningLine(winningCells);
-        scoreManager.updateScore(xTurn ? "X" : "O");
-        gameActive = false;
-        String winnerName = xTurn ? xPlayer.getName() : (oPlayer != null ? oPlayer.getName() : "Ai");
-
-        // End Recording
-        stopRecording();
-
-        if (!"Ai".equals(winnerName)) {
-            showVideoPopUp(winnerName, AppConstants.winVideoPath);
-        } else {
-            showVideoPopUp(winnerName, AppConstants.loseVideoPath);
-        }
-    } else if (isBoardFull()) {
-        gameActive = false;
-        showVideoPopUp("No One", AppConstants.drawVideoPath);
-
-        // End Recording
-        stopRecording();
-
-    } else {
-        xTurn = !xTurn;
-        if (!xTurn && oPlayer == null && gameActive) {
-            int[] aiMove = aiPlayer.getMove(aiDifficulty);
-            handleButtonClick(aiMove[0], aiMove[1]);
+    private void disableGameButtons() {
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                cells[i][j].getButton().setDisable(true);
+            }
         }
     }
-}
+
+    private void enableGameButtons() {
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                if (cells[i][j].getPlayer() == null) { // Enable only empty cells
+                    cells[i][j].getButton().setDisable(false);
+                }
+            }
+        }
+    }
 
     private boolean isBoardFull() {
         for (int i = 0; i < cells.length; i++) {
@@ -251,7 +382,6 @@ public class GameBoardController implements Initializable {
         isRecordabale = true;
         xTurn = true;
         gameActive = true;
-        AIPlayer.resetMoveCount();
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 cells[i][j].getButton().setGraphic(null);
@@ -263,10 +393,7 @@ public class GameBoardController implements Initializable {
             AnchorPane.getChildren().remove(winLine);
             winLine = null; // Clear the reference
         }
-        if (!xTurn && oPlayer == null) { // AI starts
-            int[] aiMove = aiPlayer.getMove(aiDifficulty);
-            handleButtonClick(aiMove[0], aiMove[1]);
-        }
+
     }
 
     private void recordGame() {
@@ -278,7 +405,7 @@ public class GameBoardController implements Initializable {
     }
 
     private void resignGame() {
-
+        // System.out.println("heree***** "+onlineLoginPlayerHolder.getServerMessage().);
         Text areUSure = new Text("Are you Sure");
         areUSure.setFont(Font.font("", FontWeight.BOLD, 24));
         areUSure.setFill(Color.GREY);
@@ -306,9 +433,9 @@ public class GameBoardController implements Initializable {
 
     private void configurePlayerBoxes() {
         xPlayerColumn.setSpacing(20);
-        xPlayerColumn.getChildren().addAll(UiUtils.createPlayerText(xPlayer.getName()), UiUtils.createPlayerImage(AppConstants.xIconPath));
+        xPlayerColumn.getChildren().addAll(UiUtils.createPlayerText(xPlayer.getUserName()), UiUtils.createPlayerImage(AppConstants.xIconPath));
         oPlayerColumn.setSpacing(20);
-        oPlayerColumn.getChildren().addAll(UiUtils.createPlayerText(oPlayer != null ? oPlayer.getName() : "AI"), UiUtils.createPlayerImage(AppConstants.oIconPath));
+        oPlayerColumn.getChildren().addAll(UiUtils.createPlayerText(oPlayer != null ? oPlayer.getUserName() : "AI"), UiUtils.createPlayerImage(AppConstants.oIconPath));
 
     }
 
@@ -378,31 +505,3 @@ public class GameBoardController implements Initializable {
     }
 
 }
-
-/*
-
-Here are the names and descriptions of the algorithms typically used for different difficulty levels in a Tic-Tac-Toe AI:
-
-Easy Algorithm: Random Move
-
-Name: Random Move Algorithm
-Description: This algorithm selects a move randomly from the available positions. 
-It doesn't consider the current state of the game, making it the easiest level as it can make poor decisions.
-Medium Algorithm: Rule-Based Heuristic
-
-Name: Rule-Based Heuristic Algorithm
-Description: This algorithm follows a set of simple, predefined rules to decide the next move:
-First, check for a winning move.
-If no winning move is available, check for a blocking move to prevent the opponent from winning.
-If neither is found, choose a random move from the available positions.
-This provides a more challenging game than the easy algorithm but is not unbeatable.
-Hard Algorithm: Minimax Algorithm
-
-Name: Minimax Algorithm
-Description: This is a decision-making algorithm used in game theory and
-artificial intelligence. It performs an exhaustive search of all possible moves and their outcomes to choose the best move:
-Maximizing Player: Tries to maximize the score.
-Minimizing Player: Tries to minimize the score.
-The Minimax algorithm evaluates the game tree recursively, considering both the AI's 
-and the opponent's possible moves to find the optimal strategy. This makes it an unbeatable opponent in games like Tic-Tac-Toe.
- */

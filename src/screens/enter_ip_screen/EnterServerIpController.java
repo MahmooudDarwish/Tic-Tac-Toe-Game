@@ -8,14 +8,18 @@ package screens.enter_ip_screen;
 import components.XOButton;
 import components.XOLabel;
 import components.XOTextField;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
+import utils.jsonutil.JsonSender;
 
 public class EnterServerIpController implements Initializable {
 
@@ -30,15 +34,14 @@ public class EnterServerIpController implements Initializable {
     private XOLabel ipErrorLabel;
     private XOLabel textFieldLabel;
 
-
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
-        textFieldLabel=new XOLabel("", "Enter Server IP Address", 500, 80, true);
+
+        textFieldLabel = new XOLabel("", "Enter Server IP Address", 500, 80, true);
         textFieldLabel.setLabeStyle("-fx-text-fill: black;"); // Set initial text color to black
 
         serverIp = new XOTextField("Enter Server IP", 400, 50);
@@ -62,15 +65,18 @@ public class EnterServerIpController implements Initializable {
         serverIp.textProperty().addListener((observable, oldValue, newValue) -> validateInput());
 
         screenContainer.setSpacing(20);
-        screenContainer.getChildren().addAll(textFieldLabel,serverIp,ipErrorLabel, connectServerBtn, backBtn);
+        screenContainer.getChildren().addAll(textFieldLabel, serverIp, ipErrorLabel, connectServerBtn, backBtn);
 
     }
 
     private void handleConnectServerBtnButtonAction() {
-        AppConstants.setServerIp(serverIp.getText());
-        System.out.println("Server IP" + AppConstants.getServerIp());
-        System.out.println("Navigate to Login screen");
-        TicTacToeGame.changeRoot(AppConstants.loginPath);
+     
+            AppConstants.setServerIp(serverIp.getText());
+            System.out.println("Server IP" + AppConstants.getServerIp());
+            System.out.println("Navigate to Login screen");
+            TicTacToeGame.changeRoot(AppConstants.loginPath);
+
+       
     }
 
     /**

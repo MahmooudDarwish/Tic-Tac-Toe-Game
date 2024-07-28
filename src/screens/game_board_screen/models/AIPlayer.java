@@ -61,12 +61,30 @@ public class AIPlayer {
         return getEasyMove();
     }
 
-    public int[] getHardMove() {
-        int[] bestMove = findBestMove();
-        return new int[]{bestMove[1], bestMove[2]};
-    }
+     public int[] getHardMove() {
+         if(cells[1][1].getPlayer()==null){return new int[]{1, 1}; }
+         
+         for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (cells[i][j].getPlayer() == null && isWinningMove(i, j, aiSymbol)) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (cells[i][j].getPlayer() == null && isWinningMove(i, j, opponentSymbol)) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        if(cells[0][0].getPlayer()==null){return new int[]{0,0};}
+        return getEasyMove();
+       /* int[] bestMove = findBestMove();
+        return new int[]{bestMove[1], bestMove[2]};*/
+     }
 
-    private int[] findBestMove() {
+ /*  private int[] findBestMove() {
         int bestVal = Integer.MIN_VALUE;
         int[] bestMove = new int[]{-1, -1};
 
@@ -74,7 +92,7 @@ public class AIPlayer {
             for (int j = 0; j < 3; j++) {
                 if (cells[i][j].getPlayer() == null) {
                     cells[i][j].setPlayer(aiSymbol, aiImage);
-                    int moveVal = minimax(0, false, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                    int moveVal = minimax(0, false);
                     cells[i][j].setPlayer(null, null);
                     if (moveVal > bestVal) {
                         bestMove[0] = i;
@@ -93,7 +111,7 @@ public class AIPlayer {
         return bestMove;
     }
 
-    private int minimax(int depth, boolean isMax, int alpha, int beta) {
+    private int minimax(int depth, boolean isMax) {
         String result = checkWinner();
         if (result != null) {
             if (result.equals(aiSymbol)) {
@@ -111,12 +129,8 @@ public class AIPlayer {
                 for (int j = 0; j < 3; j++) {
                     if (cells[i][j].getPlayer() == null) {
                         cells[i][j].setPlayer(aiSymbol, aiImage);
-                        best = Math.max(best, minimax(depth + 1, !isMax, alpha, beta));
+                        best = Math.max(best, minimax(depth + 1, !isMax));
                         cells[i][j].setPlayer(null, null);
-                        alpha = Math.max(alpha, best);
-                        if (beta <= alpha) {
-                            break;
-                        }
                     }
                 }
             }
@@ -127,18 +141,16 @@ public class AIPlayer {
                 for (int j = 0; j < 3; j++) {
                     if (cells[i][j].getPlayer() == null) {
                         cells[i][j].setPlayer(opponentSymbol, null);
-                        best = Math.min(best, minimax(depth + 1, !isMax, alpha, beta));
+                        best = Math.min(best, minimax(depth + 1, !isMax));
                         cells[i][j].setPlayer(null, null);
-                        beta = Math.min(beta, best);
-                        if (beta <= alpha) {
-                            break;
-                        }
                     }
                 }
             }
             return best;
         }
     }
+     
+    */
 
     private String checkWinner() {
         for (int i = 0; i < 3; i++) {
@@ -194,4 +206,5 @@ public class AIPlayer {
     public static int getMoveCount() {
         return moveCount;
     }
+
 }

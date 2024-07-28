@@ -4,8 +4,10 @@ import components.CustomLabel;
 import components.CustomPopup;
 import components.XOButton;
 import components.XOLabel;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.HBox;
@@ -67,22 +69,18 @@ public class UserHomeController implements Initializable {
     }
 
     private void handleLogOutButtonAction() {
-        player.setAction("logout");
-        String json = JsonUtil.toJson(player);
-        try {
-            response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, false); // Adjust server address and port as needed
-            System.out.println(response.toString());
+        Thread logoutThread = new Thread(() -> {
+            player.setAction("logout");
+            String json = JsonUtil.toJson(player);
+            try {
+                response = JsonSender.sendJsonAndReceiveResponse(json);
 
-            if (!response.isDone()) {
-                handlePopup("Try Again", AppConstants.warningIconPath, response.getMessage());
-            } else {
-                onlineLoginPlayerHolder.clearPlayer();
-                TicTacToeGame.changeRoot(AppConstants.loginPath);
+            } catch (IOException e) {
+                handlePopup("Server May Be Down", AppConstants.warningIconPath, "Connection Timed Out.\nPlease try again later.");
             }
-        } catch (Exception e) {
-            handlePopup("Server May Be Down", AppConstants.warningIconPath, "Connection Timed Out.\nPlease try again later.");
-            e.printStackTrace();
-        }
+        });
+
+        logoutThread.start();
     }
 
     private void handlePopup(String popupTitle, String iconPath, String message) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="AnchorPane"  id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.online_game_board_screen.OnlineGameBoardScreenController">
+    <children>
+        <fx:include source="/components/BluredXOImage.fxml"/>
+        
+        <VBox layoutX="40.0" layoutY="146.0" prefHeight="108.0" prefWidth="123.0" fx:id="xPlayerColumn" alignment="CENTER">
+        </VBox>
+        <VBox fx:id="oPlayerColumn" layoutX="431.0" layoutY="146.0" prefHeight="108.0" prefWidth="123.0"  alignment="CENTER">
+        </VBox>
+        
+    </children>
+</AnchorPane>

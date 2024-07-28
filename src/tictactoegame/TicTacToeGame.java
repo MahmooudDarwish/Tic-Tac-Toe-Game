@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tictactoegame;
 
 import java.io.IOException;
@@ -10,11 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.OnlineLoginPlayerHolder;
 import models.OnlinePlayer;
-import models.Response;
 import utils.constants.AppConstants;
 import utils.jsonutil.JsonSender;
 import utils.jsonutil.JsonUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,21 +38,22 @@ public class TicTacToeGame extends Application {
     }
 
     private void handleLogOut() {
+        OnlinePlayer player = OnlineLoginPlayerHolder.getInstance().getPlayer();
+        if (player != null) {
+            Thread logoutThread = new Thread(() -> {
+                try {
+                    player.setAction("logout");
+                    String json = JsonUtil.toJson(player);
+                    JsonSender.sendJsonAndReceiveResponse(json);
+                } catch (IOException ex) {
+                    Logger.getLogger(TicTacToeGame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            logoutThread.start();
 
-        try {
-            OnlinePlayer player = OnlineLoginPlayerHolder.getInstance().getPlayer();
-            if (player == null) {
-                System.exit(0);
-            } else {
-                player.setAction("logout");
-                String json = JsonUtil.toJson(player);
-
-                JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, false);
-                System.exit(0);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(TicTacToeGame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.exit(0);
+
     }
 
     private void handleWindowClose(WindowEvent event) {
@@ -66,8 +62,7 @@ public class TicTacToeGame extends Application {
 
     public static void changeRoot(String fxmlFile) {
         try {
-            Parent newRoot = FXMLLoader.load(TicTacToeGame.class
-                    .getResource(fxmlFile));
+            Parent newRoot = FXMLLoader.load(TicTacToeGame.class.getResource(fxmlFile));
             primaryStage.getScene().setRoot(newRoot);
         } catch (IOException ex) {
             System.out.println("Error loading FXML: " + ex.getMessage());

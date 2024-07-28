@@ -96,7 +96,7 @@ public class LoginScreenController implements Initializable {
     }
 
     private void handlePopup(String popupTitle, String iconPath, String message) {
-        popupResponseMessageLabel = new XOLabel(iconPath, message, 250, 80, true);
+        popupResponseMessageLabel = new XOLabel(iconPath, message, 500, 40, true);
         cp = new CustomPopup(popupTitle, 160, 600, true);
         cp.addContent(popupResponseMessageLabel);
         cp.addCancelButton("OK");
@@ -109,6 +109,7 @@ public class LoginScreenController implements Initializable {
     private void handleLoginButtonAction() {
         try {
             System.out.println("Navigate to Home screen");
+            JsonSender.init();
 
             // Set player credentials
             OnlinePlayer player = new OnlinePlayer();
@@ -121,10 +122,11 @@ public class LoginScreenController implements Initializable {
             System.out.println("Sending JSON: " + json);
 
             // Send JSON and receive response
-            Response response = JsonSender.sendJsonAndReceiveResponse(json, AppConstants.getServerIp(), 5006, true);
+            Response response = JsonSender.sendJsonAndReceiveResponse(json);
             if (response != null) {
                 System.out.println("Received response: " + response);
                 if (response.isDone()) {
+
                     OnlinePlayer onlinePlayer = response.getPlayer();
                     OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
                     onlineLoginPlayerHolder.setPlayer(onlinePlayer);

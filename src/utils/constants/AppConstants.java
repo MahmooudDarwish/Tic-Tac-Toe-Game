@@ -22,6 +22,9 @@ public abstract class AppConstants {
     public final static String playRecordsIconPath = "/assets/icons/playRecordsIcon.png";
     public final static String playNewGameIconPath = "/assets/icons/playNewGameIcon.png";
     public final static String logoutIconPath = "/assets/icons/logoutIcon.png";
+    public final static String loadingIcone1Path = "/assets/icons/loadingIcone1.png";
+    public final static String loadingIcone2Path = "/assets/icons/loadingIcone2.png";
+
     //IMAGES
     public final static String bachgroundImagePath = "/assets/images/XOImage.jpg";
     public final static String bluredbachgroundImagePath = "/assets/images/BluredXOImage.jpg";
@@ -42,12 +45,14 @@ public abstract class AppConstants {
     public final static String signupModePath = "/screens/signup_screen/SignupScreen.fxml";
     public final static String userHomePath = "/screens/user_home_screen/UserHomeScreen.fxml";
     public final static String gameBoardScreenPath = "/screens/game_board_screen/GameBoardScreen.fxml";
+    public final static String onlinegameBoardScreenPath = "/screens/online_game_board_screen/OnlineGameBoardScreen.fxml";
+
     public final static String aiModeScreenPath = "/screens/ai_mode_screen/AiMode.fxml";
     public final static String enterServerIpScreen = "/screens/enter_ip_screen/EnterServerIp.fxml";
     public final static String gameLoppyPath = "/screens/lobby_screen_mode/LobbyScreenUi.fxml";
-    public final static String playerhistoryPath ="/screens/player_history_screen/PlayerHistory.fxml";
-    public final static String startScreenPath ="/screens/start_screen/StartScreen.fxml";
-    public final static String playRecordScreenPath ="/screens/play_record_screen/PlayRecord.fxml";
+    public final static String playerhistoryPath = "/screens/player_history_screen/PlayerHistory.fxml";
+    public final static String startScreenPath = "/screens/start_screen/StartScreen.fxml";
+    public final static String playRecordScreenPath = "/screens/play_record_screen/PlayRecord.fxml";
     //SERVER
     private static String serverIp;
 
