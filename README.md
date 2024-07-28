@@ -1,4 +1,4 @@
-Tic Tac Toe Game Server
+Tic Tac Toe Game 
 
 
 This repository contains  a Tic Tac Toe game that supports both offline and networked play. You can play with a friend either on the same device or over the same network.
