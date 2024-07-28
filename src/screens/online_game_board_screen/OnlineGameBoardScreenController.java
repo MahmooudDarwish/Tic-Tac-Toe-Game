@@ -269,29 +269,29 @@ public class OnlineGameBoardScreenController implements Initializable {
         gp.setVgap(5);
         gp.setPadding(new Insets(20));
 
-//        for (int i = 0; i <= 2; i++) {
-//            for (int j = 0; j <= 2; j++) {
-//                cells[i][j] = new Cell();
-//                Button borderButton = cells[i][j].getButton();
-//                String cssFormat = String.format("-fx-background-color: #%06X; -fx-text-fill: #%06X;", BasicColors.BLUE, BasicColors.WHITE);
-//                borderButton.setStyle(cssFormat);
-//                final int row = i;
-//                final int col = j;
-//                borderButton.setOnAction(e -> handleButtonClick(row, col));
-//                gp.add(borderButton, j, i);
-//            }
-//        }
-        
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 cells[i][j] = new Cell();
                 Button borderButton = cells[i][j].getButton();
+                String cssFormat = String.format("-fx-background-color: #%06X; -fx-text-fill: #%06X;", BasicColors.BLUE, BasicColors.WHITE);
+                borderButton.setStyle(cssFormat);
                 final int row = i;
                 final int col = j;
                 borderButton.setOnAction(e -> handleButtonClick(row, col));
                 gp.add(borderButton, j, i);
             }
         }
+        
+//        for (int i = 0; i <= 2; i++) {
+//            for (int j = 0; j <= 2; j++) {
+//                cells[i][j] = new Cell();
+//                Button borderButton = cells[i][j].getButton();
+//                final int row = i;
+//                final int col = j;
+//                borderButton.setOnAction(e -> handleButtonClick(row, col));
+//                gp.add(borderButton, j, i);
+//            }
+//        }
 
          return gp;
     }
