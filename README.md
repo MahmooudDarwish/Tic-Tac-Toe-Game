@@ -5,7 +5,6 @@ Getting Started
 To get started with this project, follow these steps:
 
 Clone the Repository
-نسخ الكود
 git clone https://github.com/mohamed-abdelrehim142000/Tic-Tac-Toe-Game-Server.git
 cd Tic-Tac-Toe-Game-Server
 
