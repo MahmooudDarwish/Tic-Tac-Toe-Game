@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens.signup_screen;
 
 import components.CustomPopup;
@@ -10,6 +5,8 @@ import components.XOButton;
 import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
+import handlingplayerrequests.PlayerRequestHandler;
+import handlingplayerrequests.RequestStatus;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,23 +17,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
-
-import utils.jsonutil.JsonUtil;
 import java.util.regex.Pattern;
-import models.OnlinePlayer;
-import models.Response;
+import models.Player;
+import screens.login_screen.LoginScreenController;
 import utils.jsonutil.JsonSender;
 
 /**
- * FXML Controller class
- *
- * @author Mohammed
+ * FXML Controller class for the signup screen.
  */
-public class SignupScreenController implements Initializable {
+public class SignupScreenController implements Initializable , RequestStatus {
 
     @FXML
     private VBox screenContainer;
-    private OnlinePlayer player;
     private XOTextField userNameField;
     private XOPasswordField passwordField;
     private XOPasswordField confirmPasswordField;
@@ -44,22 +36,24 @@ public class SignupScreenController implements Initializable {
     private XOButton loginBtn;
     private XOLabel passwordErrorLabel;
     private XOLabel confirmPasswordErrorLabel;
-
-    private Response response;
+    private static final Logger LOGGER = Logger.getLogger(SignupScreenController.class.getName());
     private CustomPopup cp;
     private XOLabel popupResponseMessageLabel;
+    private PlayerRequestHandler requestHandler;
 
-    /**
-     * Initializes the controller class.
-     *
-     * @Mohammed
-     * @
-     */
     @Override
-
     public void initialize(URL url, ResourceBundle rb) {
-        player = new OnlinePlayer();
-        // TODO
+        initializeUIComponents();
+        requestHandler = new PlayerRequestHandler(this,null,null,null);
+        updateRegisterButtonState();
+
+        // Add listeners to update the button state when the fields change
+        userNameField.textProperty().addListener((observable, oldValue, newValue) -> updateRegisterButtonState());
+        passwordField.textProperty().addListener((observable, oldValue, newValue) -> updateRegisterButtonState());
+        confirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> updateRegisterButtonState());
+    }
+
+    private void initializeUIComponents() {
         userNameField = new XOTextField("Enter Your Username", 400, 50);
         passwordField = new XOPasswordField("Enter Your Password", 400, 50);
         confirmPasswordField = new XOPasswordField("Repeat Your Password", 400, 50);
@@ -67,30 +61,11 @@ public class SignupScreenController implements Initializable {
         passwordErrorLabel = new XOLabel(AppConstants.warningIconPath, "", 500, 80, false);
         confirmPasswordErrorLabel = new XOLabel(AppConstants.warningIconPath, "", 500, 10, false);
 
-        registerBtn = new XOButton("Register",
-                this::handleRegisterButtonAction,
-                AppConstants.xIconPath,
-                200,
-                40,
-                AppConstants.buttonClickedTonePath);
-
-        loginBtn = new XOButton("Login",
-                this::handleLoginButtonAction,
-                AppConstants.oIconPath,
-                200,
-                40,
-                AppConstants.buttonClickedTonePath);
+        registerBtn = new XOButton("Register", this::handleRegisterButtonAction, AppConstants.xIconPath, 200, 40, AppConstants.buttonClickedTonePath);
+        loginBtn = new XOButton("Login", this::handleLoginButtonAction, AppConstants.oIconPath, 200, 40, AppConstants.buttonClickedTonePath);
 
         screenContainer.setSpacing(20);
         screenContainer.getChildren().addAll(userNameField, passwordField, confirmPasswordField, passwordErrorLabel, confirmPasswordErrorLabel, registerBtn, loginBtn);
-
-        updateRegisterButtonState();
-
-        // Add listeners to update the button state when the fields change
-        userNameField.textProperty().addListener((observable, oldValue, newValue) -> updateRegisterButtonState());
-        passwordField.textProperty().addListener((observable, oldValue, newValue) -> updateRegisterButtonState());
-        confirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> updateRegisterButtonState());
-
     }
 
     private void updateRegisterButtonState() {
@@ -124,17 +99,7 @@ public class SignupScreenController implements Initializable {
     }
 
     private boolean areFieldsEmpty(XOTextField userNameField, XOPasswordField passwordField, XOPasswordField confirmPasswordField) {
-        boolean isEmpty = false;
-        if (userNameField.getText().isEmpty()) {
-            isEmpty = true;
-        }
-        if (passwordField.getText().isEmpty()) {
-            isEmpty = true;
-        }
-        if (confirmPasswordField.getText().isEmpty()) {
-            isEmpty = true;
-        }
-        return isEmpty;
+        return userNameField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty();
     }
 
     private boolean isPasswordValid(String password) {
@@ -147,47 +112,34 @@ public class SignupScreenController implements Initializable {
     }
 
     private void handleLoginButtonAction() {
-        System.out.println("Navigate to login screen");
+        LOGGER.info("Navigating to login screen.");
         TicTacToeGame.changeRoot(AppConstants.loginPath);
     }
 
-    private void handlePopup(String popupTitel, String iconePath, String message) {
-        popupResponseMessageLabel = new XOLabel(iconePath, message, 250, 60, true);
-        cp = new CustomPopup(popupTitel, 150, 600, true);
+    private void handlePopup(String popupTitle, String iconPath, String message) {
+        popupResponseMessageLabel = new XOLabel(iconPath, message, 250, 60, true);
+        cp = new CustomPopup(popupTitle, 150, 600, true);
         cp.addContent(popupResponseMessageLabel);
         cp.addCancelButton("OK");
         cp.show();
     }
 
     private void handleRegisterButtonAction() {
-        try {
-            System.out.println("Navigate to Home screen");
+        LOGGER.info("Register button clicked.");
+        String userName = userNameField.getText();
+        String password = passwordField.getText();
+        requestHandler.register(userName, password);
+  
+        
+    }
 
-            // Set player credentials
-            player = new OnlinePlayer();
-            player.setUserName(userNameField.getText());
-            player.setPassword(passwordField.getText());
-            player.setAction("register");
+    @Override
+    public void onSuccess(String msg) {
+            TicTacToeGame.changeRoot(AppConstants.loginPath);
+    }
 
-            // Convert player object to JSON
-            String json = JsonUtil.toJson(player);
-            System.out.println("Sending JSON: " + json);
-
-            // Send JSON and receive response
-            response = JsonSender.sendJsonAndReceiveResponse(json);
-            if (response != null) {
-                System.out.println("Received response: " + response);
-                if (response.isDone()) {
-                    handlePopup("Registration Successful", AppConstants.doneIconPath, "Registration successful.");
-                    TicTacToeGame.changeRoot(AppConstants.loginPath); // Switch to login screen
-                } else {
-                    handlePopup("Registration Failed", AppConstants.warningIconPath, "Registration failed: " + response.getMessage());
-                }
-            } else {
-                handlePopup("Registration Error", AppConstants.warningIconPath, "Failed to connect to server.");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(SignupScreenController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    @Override
+    public void onFailure(String msg) {
+            handlePopup("Failed", AppConstants.warningIconPath, msg);
     }
 }

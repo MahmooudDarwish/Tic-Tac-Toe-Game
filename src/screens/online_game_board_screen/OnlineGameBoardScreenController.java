@@ -3,6 +3,8 @@ package screens.online_game_board_screen;
 import components.CustomPopup;
 import components.XOButton;
 import components.XOTextField;
+import handlingplayerrequests.HandelPlayerMoveInterface;
+import handlingplayerrequests.PlayerRequestHandler;
 import java.io.File;
 import java.io.IOException;
 import javafx.scene.image.Image;
@@ -23,6 +25,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -40,10 +43,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import models.OnlineLoginPlayerHolder;
-import models.OnlinePlayer;
+import models.Player;
 import models.OnlinePlayerHolder;
 import models.Response;
-import models.ServerStatusChecker;
 import tictactoegame.TicTacToeGame;
 import utils.constants.BasicColors;
 import utils.game_file_manager.GameFileManager;
@@ -51,12 +53,14 @@ import utils.helpers.ToneManager;
 import utils.jsonutil.JsonSender;
 import utils.jsonutil.JsonUtil;
 
-public class OnlineGameBoardScreenController implements Initializable {
+public class OnlineGameBoardScreenController implements Initializable, HandelPlayerMoveInterface {
 
     private boolean xTurn;
+    private boolean turn;
+
     private boolean gameActive;
-    private OnlinePlayer xPlayer;
-    private OnlinePlayer oPlayer;
+    private Player xPlayer;
+    private Player oPlayer;
     private Image xImage;
     private Image oImage;
     private Cell[][] cells;
@@ -74,11 +78,17 @@ public class OnlineGameBoardScreenController implements Initializable {
     private static boolean isRecordabale = true;
     private int[][] winningCells;
     OnlineLoginPlayerHolder onlineLoginPlayerHolder;
+    private PlayerRequestHandler requestHandler;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+
         OnlinePlayerHolder onlinePlayerHolder = OnlinePlayerHolder.getInstance();
         onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
+        
+
+        requestHandler = new PlayerRequestHandler(null, null, null, this);
 
         xPlayer = onlinePlayerHolder.getXPlayer();
         oPlayer = onlinePlayerHolder.getOPlayer();
@@ -89,6 +99,7 @@ public class OnlineGameBoardScreenController implements Initializable {
         System.out.println("=====================================================");
 
         xTurn = xPlayer.getUserName().equals(onlineLoginPlayerHolder.getPlayer().getUserName());
+        turn = xPlayer.getUserName().equals(onlineLoginPlayerHolder.getPlayer().getUserName());
         gameActive = true;
 
         xImage = new Image(AppConstants.xIconPath);
@@ -122,37 +133,8 @@ public class OnlineGameBoardScreenController implements Initializable {
 
         UiUtils.setRecordBtuText("Record");
 
-        if (!xTurn) {
-            // disableGameButtons();
-        }
+       
 
-        listenForOpponentMove();
-    }
-
-    private void listenForOpponentMove() {
-        Thread thread = new Thread(() -> {
-            while (gameActive) {
-                try {
-                    String serverMessage = "";
-                    // Replace with actual method to get the message from the server
-                    if (onlineLoginPlayerHolder.getServerMessage() != null) {
-                        serverMessage = onlineLoginPlayerHolder.getServerMessage().getMessage();
-                    }
-                    if (serverMessage.contains("move")) {
-                        final String finalServerMessage = serverMessage; // Make the variable effectively final
-                        Platform.runLater(() -> startGameRecord(finalServerMessage));
-                    }
-
-                    // Sleep for a short period to avoid busy-waiting
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    System.err.println("Listening thread interrupted: " + e.getMessage());
-                }
-            }
-        });
-
-        thread.setDaemon(true); // Ensure the thread will not prevent the application from exiting
-        thread.start();
     }
 
     private void startGameRecord(String moveData) {
@@ -164,7 +146,6 @@ public class OnlineGameBoardScreenController implements Initializable {
             moveData = moveData.replace("move", "").trim();
             String[] parts = moveData.split(",");
 
-            
             // Parse row and column indices and the player's move
             int rowIndex = Integer.parseInt(parts[0].trim());
             int colIndex = Integer.parseInt(parts[1].trim());
@@ -225,7 +206,8 @@ public class OnlineGameBoardScreenController implements Initializable {
         System.out.println("handleButtonClick - Player " + (xTurn ? "X" : "O") + " moved to cell (" + row + ", " + col + ")");
 
         sendMoveToServer(row, col);
-
+    
+        
         isRecordabale = false;
         if (!isRecordabale) {
             UiUtils.setRecordBtuStatus(!isRecordabale);
@@ -245,14 +227,19 @@ public class OnlineGameBoardScreenController implements Initializable {
             gameActive = false;
             System.out.println("handleButtonClick - Winning condition met. Game over.");
 
-            String winnerName = xTurn ? xPlayer.getUserName() : (oPlayer != null ? oPlayer.getUserName() : "Ai");
+            String winnerName = xTurn ? xPlayer.getUserName() : oPlayer.getUserName();
 
             stopRecording();
 
-            if (!"Ai".equals(winnerName)) {
+            if (xPlayer.getUserName().equals(winnerName) && xTurn) {
                 showVideoPopUp(winnerName, AppConstants.winVideoPath);
+            } else if (oPlayer.getUserName().equals(winnerName) && !xTurn) {
+                showVideoPopUp(winnerName, AppConstants.winVideoPath);
+            } else if (oPlayer.getUserName().equals(winnerName) && xTurn) {
+                showVideoPopUp(winnerName, AppConstants.loseVideoPath);
             } else {
                 showVideoPopUp(winnerName, AppConstants.loseVideoPath);
+
             }
         } else if (isBoardFull()) {
             gameActive = false;
@@ -281,44 +268,18 @@ public class OnlineGameBoardScreenController implements Initializable {
                 gp.add(borderButton, j, i);
             }
         }
-        
-//        for (int i = 0; i <= 2; i++) {
-//            for (int j = 0; j <= 2; j++) {
-//                cells[i][j] = new Cell();
-//                Button borderButton = cells[i][j].getButton();
-//                final int row = i;
-//                final int col = j;
-//                borderButton.setOnAction(e -> handleButtonClick(row, col));
-//                gp.add(borderButton, j, i);
-//            }
-//        }
 
-         return gp;
+        return gp;
     }
 
     private void sendMoveToServer(int row, int col) {
-        Thread thread = new Thread(() -> {
-            try {
-                OnlinePlayer onlinePlayer = new OnlinePlayer();
-                onlinePlayer.setAction("move");
+        Player onlinePlayer = new Player();
+        onlinePlayer.setUserName(xTurn ? oPlayer.getUserName() : xPlayer.getUserName());
+        String moveDecider = row + "," + col + "," + (xTurn ? "X" : "O");
+        requestHandler.sendMove(moveDecider, onlinePlayer.getUserName());
+        
+        
 
-                onlinePlayer.setUserName(xTurn ? oPlayer.getUserName() : xPlayer.getUserName());
-
-                String moveDecider = row + "," + col + "," + (xTurn ? "X" : "O");
-                onlinePlayer.setMessage(moveDecider);
-
-                String json = JsonUtil.toJson(onlinePlayer);
-                Response response = JsonSender.sendJsonAndReceiveResponse(json);
-
-                if (response == null || !response.isDone()) {
-                    System.out.println("Move was not successful.");
-                }
-            } catch (IOException ex) {
-                // Handle the exception appropriately
-            }
-        });
-
-        thread.start();
     }
 
     private void disableGameButtons() {
@@ -501,6 +462,20 @@ public class OnlineGameBoardScreenController implements Initializable {
         UiUtils.setRecordBtuText("Record");
         UiUtils.setRecordBtuStatus(isRecordOn);
         gameFileManager.endRecordingGame();
+
+    }
+    // Method to update the current player's turn display
+
+
+
+    @Override
+    public void setPlayerMove(String move) {
+
+        System.out.println("=================================" + move);
+        if (move != null) {
+            Platform.runLater(() -> startGameRecord(move));
+        }
+        
 
     }
 

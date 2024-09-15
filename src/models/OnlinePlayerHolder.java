@@ -11,8 +11,8 @@ package models;
  */
 public class OnlinePlayerHolder {
 
-    private OnlinePlayer xPlayer;
-    private OnlinePlayer oPlayer;
+    private Player xPlayer;
+    private Player oPlayer;
 
     private final static OnlinePlayerHolder INSTANCE = new OnlinePlayerHolder();
 
@@ -23,19 +23,19 @@ public class OnlinePlayerHolder {
         return INSTANCE;
     }
 
-    public void setXPlayer(OnlinePlayer xPlayer) {
+    public void setXPlayer(Player xPlayer) {
         this.xPlayer = xPlayer;
     }
 
-    public OnlinePlayer getXPlayer() {
+    public Player getXPlayer() {
         return this.xPlayer;
     }
 
-    public void setOPlayer(OnlinePlayer oPlayer) {
+    public void setOPlayer(Player oPlayer) {
         this.oPlayer = oPlayer;
     }
 
-    public OnlinePlayer getOPlayer() {
+    public Player getOPlayer() {
         return this.oPlayer;
     }
 

@@ -24,6 +24,10 @@ public abstract class AppConstants {
     public final static String logoutIconPath = "/assets/icons/logoutIcon.png";
     public final static String loadingIcone1Path = "/assets/icons/loadingIcone1.png";
     public final static String loadingIcone2Path = "/assets/icons/loadingIcone2.png";
+    
+    public final static String playIconePath = "/assets/icons/play-station.png";
+    public final static String palyIcone2Path = "/assets/icons/play.png";
+
 
     //IMAGES
     public final static String bachgroundImagePath = "/assets/images/XOImage.jpg";
@@ -55,6 +59,11 @@ public abstract class AppConstants {
     public final static String playRecordScreenPath = "/screens/play_record_screen/PlayRecord.fxml";
     //SERVER
     private static String serverIp;
+    private static final int SERVER_PORT = 5006;
+
+    public static int getServerPort() {
+        return SERVER_PORT;
+    }
 
     public static void setServerIp(String ip) {
         serverIp = ip;

@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
-import models.OnlinePlayer;
+import models.Player;
 
 /**
  *
@@ -19,7 +19,7 @@ import models.OnlinePlayer;
     private static Gson gson = new Gson();
     
     
-    public static List<OnlinePlayer> fromJsonToList(String json, Class<OnlinePlayer> clazz) {
+    public static List<Player> fromJsonToList(String json, Class<Player> clazz) {
         Type listType = TypeToken.getParameterized(List.class, clazz).getType();
         return gson.fromJson(json, listType);
     }

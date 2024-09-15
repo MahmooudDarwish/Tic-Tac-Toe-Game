@@ -1,32 +1,29 @@
 package screens.login_screen;
 
 import components.CustomPopup;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.VBox;
 import components.XOButton;
 import components.XOLabel;
 import components.XOPasswordField;
 import components.XOTextField;
+import handlingplayerrequests.PlayerRequestHandler;
+import handlingplayerrequests.RequestStatus;
 import java.io.IOException;
-import models.OnlineLoginPlayerHolder;
-import models.OnlinePlayer;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.regex.Pattern;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.layout.VBox;
 import tictactoegame.TicTacToeGame;
 import utils.constants.AppConstants;
 import utils.jsonutil.JsonSender;
-import utils.jsonutil.JsonUtil;
-
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import models.Response;
 
 /**
  * FXML Controller class for the login screen.
  */
-public class LoginScreenController implements Initializable {
+public class LoginScreenController implements Initializable ,RequestStatus {
 
     @FXML
     private VBox screenContainer;
@@ -38,15 +35,24 @@ public class LoginScreenController implements Initializable {
     private CustomPopup cp;
     private XOLabel popupResponseMessageLabel;
     private XOLabel passwordErrorLabel;
+    private PlayerRequestHandler requestHandler;
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$");
+    private static final Logger LOGGER = Logger.getLogger(LoginScreenController.class.getName());
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initializeComponents();
+        configureComponents();
+        setUpListeners();
+    }
+
+    private void initializeComponents() {
         userNameField = new XOTextField("Enter Your UserName", 400, 50);
         passwordField = new XOPasswordField("Enter Your Password", 400, 50);
         passwordErrorLabel = new XOLabel(AppConstants.warningIconPath, "", 500, 80, false);
+        requestHandler = new PlayerRequestHandler(this,null,null,null);
 
         registerBtn = new XOButton("Register",
                 this::handleRegisterButtonAction,
@@ -69,17 +75,20 @@ public class LoginScreenController implements Initializable {
                 200,
                 40,
                 AppConstants.buttonClickedTonePath);
+    }
 
-        // Add listeners to the text fields to enable/disable the login button
-        userNameField.textProperty().addListener((observable, oldValue, newValue) -> validateInput());
-        passwordField.textProperty().addListener((observable, oldValue, newValue) -> validateInput());
-
+    private void configureComponents() {
         screenContainer.setSpacing(20);
         screenContainer.getChildren().addAll(userNameField, passwordField, passwordErrorLabel, loginBtn, registerBtn, backBtn);
     }
 
+    private void setUpListeners() {
+        userNameField.textProperty().addListener((observable, oldValue, newValue) -> validateInput());
+        passwordField.textProperty().addListener((observable, oldValue, newValue) -> validateInput());
+    }
+
     /**
-     * Validate the input fields and enable/disable the login button
+     * Validate the input fields and enable/disable the login button.
      */
     private void validateInput() {
         String userName = userNameField.getText();
@@ -104,51 +113,34 @@ public class LoginScreenController implements Initializable {
     }
 
     /**
-     * Handle the login button action
+     * Handle the login button action.
      */
     private void handleLoginButtonAction() {
-        try {
-            System.out.println("Navigate to Home screen");
-            JsonSender.init();
-
-            // Set player credentials
-            OnlinePlayer player = new OnlinePlayer();
-            player.setUserName(userNameField.getText());
-            player.setPassword(passwordField.getText());
-            player.setAction("login");
-
-            // Convert player object to JSON
-            String json = JsonUtil.toJson(player);
-            System.out.println("Sending JSON: " + json);
-
-            // Send JSON and receive response
-            Response response = JsonSender.sendJsonAndReceiveResponse(json);
-            if (response != null) {
-                System.out.println("Received response: " + response);
-                if (response.isDone()) {
-
-                    OnlinePlayer onlinePlayer = response.getPlayer();
-                    OnlineLoginPlayerHolder onlineLoginPlayerHolder = OnlineLoginPlayerHolder.getInstance();
-                    onlineLoginPlayerHolder.setPlayer(onlinePlayer);
-                    TicTacToeGame.changeRoot(AppConstants.userHomePath);
-                } else {
-                    handlePopup("Login Failed", AppConstants.warningIconPath, "Login failed: " + response.getMessage());
-                }
-            } else {
-                handlePopup("Login Error", AppConstants.warningIconPath, "Failed to connect to server.");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(LoginScreenController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        LOGGER.info("Login button clicked.");
+        String userName = userNameField.getText();
+        String password = passwordField.getText();
+        requestHandler.login(userName, password);
+        } 
+    
 
     private void handleRegisterButtonAction() {
-        System.out.println("Navigate to Signup screen");
+        LOGGER.info("Register button clicked. Navigating to Signup screen.");
         TicTacToeGame.changeRoot(AppConstants.signupModePath); // Switch to sign up screen
     }
 
     private void handleBackButtonAction() {
-        System.out.println("Navigate to Main Menu screen");
+        LOGGER.info("Back button clicked. Navigating to Main Menu screen.");
         TicTacToeGame.changeRoot(AppConstants.connectionModePath); // Switch to main menu screen
+    }
+
+    @Override
+    public void onSuccess(String msg) {           
+        TicTacToeGame.changeRoot(AppConstants.userHomePath);
+    }
+
+    @Override
+    public void onFailure(String msg) {
+        handlePopup("Warning", AppConstants.warningIconPath, msg); 
+        
     }
 }

@@ -3,16 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="anchorPane"  id="AnchorPane" prefHeight="768" prefWidth="1366" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.lobby_screen_mode.LobbyScreenUiController">
+<AnchorPane fx:id="anchorPane" id="AnchorPane" prefHeight="768" prefWidth="1366" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.lobby_screen_mode.LobbyScreenUiController">
     <children>
-            
-        <ListView prefHeight="768" prefWidth="1366" fx:id="playersView"/>
-        
+        <ListView fx:id="playersView" prefHeight="768" prefWidth="1366"/>
     </children>
 </AnchorPane>
-
-
-
-
-
-
